@@ -11,6 +11,10 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 
+import java.util.Map;
+
+import edu.wpi.first.wpilibj.RobotBase;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean
@@ -27,12 +31,12 @@ public final class Constants {
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
-    public static final double kMaxSpeedMetersPerSecond = 4.8;
-    public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
+    public static final double kMaxSpeedMetersPerSecond = 1.5; // Max speed = 5.0
+    public static final double kMaxAngularSpeed = 2.3 * Math.PI; // radians per second  max is 4 so far?
 
-    public static final double kDirectionSlewRate = 1.2; // radians per second
-    public static final double kMagnitudeSlewRate = 1.8; // percent per second (1 = 100%)
-    public static final double kRotationalSlewRate = 2.0; // percent per second (1 = 100%)
+    public static final double kDirectionSlewRate = 2.3; // radians per second
+    public static final double kMagnitudeSlewRate = 2; // percent per second (1 = 100%)
+    public static final double kRotationalSlewRate = 2; // percent per second (1 = 100%)
 
     // Chassis configuration
     public static final double kTrackWidth = Units.inchesToMeters(26.5);
@@ -109,8 +113,8 @@ public final class Constants {
     public static final double kTurningMinOutput = -1;
     public static final double kTurningMaxOutput = 1;
 
-    public static final IdleMode kDrivingMotorIdleMode = IdleMode.kBrake;
-    public static final IdleMode kTurningMotorIdleMode = IdleMode.kBrake;
+    public static final IdleMode kDrivingMotorIdleMode = IdleMode.kCoast;
+    public static final IdleMode kTurningMotorIdleMode = IdleMode.kCoast;
 
     public static final int kDrivingMotorCurrentLimit = 50; // amps
     public static final int kTurningMotorCurrentLimit = 20; // amps
@@ -138,5 +142,47 @@ public final class Constants {
 
   public static final class NeoMotorConstants {
     public static final double kFreeSpeedRpm = 5676;
+  }
+
+  public static final Mode currentMode = Mode.SIM;
+
+  private static final RobotType robot = RobotType.ROBOT_2022S;
+  public static final double loopPeriodSecs = 0.02;
+  public static final boolean tuningMode = false;
+
+  public static RobotType getRobot() {
+    if (RobotBase.isReal()) {
+      if (robot == RobotType.ROBOT_SIMBOT) {
+        return RobotType.ROBOT_2022S;
+      } else {
+        return robot;
+      }
+    } else {
+      return robot;
+    }
+  }
+
+  public static Mode getMode() {
+    switch (getRobot()) {
+      case ROBOT_2022S:
+        return RobotBase.isReal() ? Mode.REAL : Mode.REPLAY;
+
+      case ROBOT_SIMBOT:
+        return Mode.SIM;
+
+      default:
+        return Mode.REAL;
+    }
+  }
+
+  public static final Map<RobotType, String> logFolders =
+      Map.of(RobotType.ROBOT_2022S, "/media/sda2");
+
+  public static enum RobotType {
+    ROBOT_2022S, ROBOT_SIMBOT
+  }
+
+  public static enum Mode {
+    REAL, REPLAY, SIM
   }
 }
