@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.math.util.Units;
 
 import java.util.Map;
@@ -28,6 +29,22 @@ import edu.wpi.first.wpilibj.RobotBase;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static final class MechConstants {
+
+    public static final double kPElevAngle = 0.04;
+    public static final double kIElevAngle = 0.01;
+    public static final double kDElevAngle = 0;
+
+    public static final double kPElevLen = 0.05;
+    public static final double kIElevLen = 0.01;
+    public static final double kDElevLen = 0;
+
+    public static final double kElevAngleMaxVelocity = 4.25;
+    public static final double kElevAngleMaxAcceleration = .75;
+
+    public static final double kElevAngleConversionFactor = 2 * Math.PI / 180;
+    public static final double kArmOffsetRads = 0.5;
+  }
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
