@@ -20,12 +20,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.MechConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import java.util.List;
 
@@ -43,10 +47,11 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  private final Elevator m_Elevator = new Elevator();
   //private final Shooter m_Shooter = new Shooter();
 
   // The driver's controller
-  XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
+  CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
   private final LoggedDashboardChooser<Command> autoChooser;
 
   /**
@@ -83,13 +88,38 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
-    new JoystickButton(m_driverController, Button.kTriangle.value).whileTrue(new RunCommand(() -> m_robotDrive.setX(),m_robotDrive));
-
-    /*m_Shooter.setDefaultCommand(
-      new RunCommand(
-        () -> m_Shooter.setShooter(m_driverController.getAButton(), m_driverController.getBButton()),
-        m_Shooter
-      ));*/
+    m_driverController.y().
+      whileTrue(
+        new RunCommand(() -> m_robotDrive.setX(), m_robotDrive));
+    //Position 1
+    m_driverController.x()
+      .onTrue(
+        Commands.runOnce(
+          () -> {
+            m_Elevator.setGoal(MechConstants.kArmOffsetRads);
+            m_Elevator.enable();
+          }
+          , m_Elevator));
+    //Position 2
+    m_driverController.a()
+      .onTrue(
+        Commands.runOnce(
+          () -> {
+            m_Elevator.setGoal(/*Low*/ null);
+            m_Elevator.enable();
+          }
+          , m_Elevator));
+    //Position 3
+    m_driverController.b()
+      .onTrue(
+        Commands.runOnce(
+          () -> {
+            m_Elevator.setGoal(/*Low*/ null);
+            m_Elevator.enable();
+          }
+          , m_Elevator));
+          
+    
     SmartDashboard.putData("Example Auto", new PathPlannerAuto("New Auto"));
   }
 

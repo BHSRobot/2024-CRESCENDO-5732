@@ -26,16 +26,16 @@ public class Shooter extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-  public void setShooter(boolean aButton, boolean bButton) {
-      if (aButton && bButton) {
+  public void setShooter(double lefAxis, double rigAxis) {
+      if (lefAxis >= .9 && rigAxis >= .9) {
           neo1.set(0);
           neo2.set(0);
       }
-      else if (aButton && !bButton) {
+      else if (lefAxis >= .9 && !(rigAxis >= .9)) {
           neo1.set(1);
           neo2.set(-1);
       }
-      else if (!aButton && bButton) {
+      else if (!(lefAxis >= .9) && rigAxis >= .9) {
           neo1.set(-1);
           neo2.set(1);
       }
