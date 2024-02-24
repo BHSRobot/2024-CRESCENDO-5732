@@ -40,9 +40,9 @@ public class Elevator extends ProfiledPIDSubsystem {
     m_ElevAngle = new CANSparkMax(8, MotorType.kBrushless);
     m_feedforward = new ArmFeedforward(
       getMeasurement(),
-      getMeasurement(),
-      getMeasurement(),
-      getMeasurement());
+      MechConstants.kGElevAng,
+      MechConstants.kVElevAng,
+      MechConstants.kAElevAng);
 
     //Absolute
     m_EncAngEncoder = m_ElevAngle.getEncoder();

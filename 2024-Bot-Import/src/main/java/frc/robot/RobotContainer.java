@@ -27,6 +27,7 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -90,7 +91,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     m_driverController.y().
       whileTrue(
-        new RunCommand(() -> m_robotDrive.setX(), m_robotDrive));
+        new InstantCommand(() -> m_robotDrive.setX(), m_robotDrive));
     //Position 1
     m_driverController.x()
       .onTrue(

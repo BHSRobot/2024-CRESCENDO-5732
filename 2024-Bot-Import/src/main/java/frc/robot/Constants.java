@@ -44,6 +44,10 @@ public final class Constants {
 
     public static final double kElevAngleConversionFactor = 2 * Math.PI / 180;
     public static final double kArmOffsetRads = 0.5;
+
+    public static final double kGElevAng = 1.45;
+    public static final double kVElevAng = 2.10;
+    public static final double kAElevAng = 0.06;
   }
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
