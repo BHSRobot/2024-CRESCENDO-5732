@@ -8,6 +8,9 @@ import frc.robot.Constants.MechConstants;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+
+import org.littletonrobotics.junction.Logger;
+
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
@@ -39,7 +42,7 @@ public class Elevator extends ProfiledPIDSubsystem {
         0);
     m_ElevAngle = new CANSparkMax(8, MotorType.kBrushless);
     m_feedforward = new ArmFeedforward(
-      getMeasurement(),
+      0,
       MechConstants.kGElevAng,
       MechConstants.kVElevAng,
       MechConstants.kAElevAng);
@@ -51,6 +54,7 @@ public class Elevator extends ProfiledPIDSubsystem {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    Logger.recordOutput("Elevator Pivot Angle: ", getMeasurement());
   }
 
   @Override

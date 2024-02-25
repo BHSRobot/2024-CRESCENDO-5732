@@ -130,7 +130,7 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearLeft.getPosition(),
             m_rearRight.getPosition()
         });
-    SmartDashboard.putNumber("Gyro Angle", m_gyro.getAngle());
+    Logger.recordOutput("Gyro Angle", m_gyro.getAngle());
     //Logger.recordOutput("Position", new SwerveModulePosition[] {});
     Logger.recordOutput("Pose2d", m_odometry.getPoseMeters());
   }

@@ -24,7 +24,7 @@ import frc.robot.Constants.MechConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -47,27 +47,27 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
  */
 public class RobotContainer {
   // The robot's subsystems
-  private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-  private final Elevator m_Elevator = new Elevator();
-  //private final Shooter m_Shooter = new Shooter();
+  //private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  //private final Elevator m_Elevator = new Elevator();
+  private final Intake m_Intake = new Intake();
 
   // The driver's controller
   CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
-  private final LoggedDashboardChooser<Command> autoChooser;
+  //private final LoggedDashboardChooser<Command> autoChooser;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
 
   public RobotContainer() {
-    autoChooser = new LoggedDashboardChooser<>("AutoChooser", AutoBuilder.buildAutoChooser());
-    SmartDashboard.putData("Auto Mode", AutoBuilder.buildAutoChooser());
+    //autoChooser = new LoggedDashboardChooser<>("AutoChooser", AutoBuilder.buildAutoChooser());
+    //SmartDashboard.putData("Auto Mode", AutoBuilder.buildAutoChooser());
 
     // Configure the button bindings
     configureButtonBindings();
 
     // Configure default commands
-    m_robotDrive.setDefaultCommand(
+    /*m_robotDrive.setDefaultCommand(
         // The left stick controls translation of the robot.
         // Turning is controlled by the X axis of the right stick.
         new RunCommand(
@@ -76,7 +76,11 @@ public class RobotContainer {
                 -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
                 -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
                 true, false),
-            m_robotDrive));
+            m_robotDrive));*/
+    
+    m_Intake.setDefaultCommand(
+      m_Intake.disabledCommand()
+    );
   }
 
   /**
@@ -89,39 +93,44 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
-    m_driverController.y().
+   /*m_driverController.y().
       whileTrue(
-        new InstantCommand(() -> m_robotDrive.setX(), m_robotDrive));
+        new InstantCommand(() -> m_robotDrive.setX(), m_robotDrive));*/
     //Position 1
-    m_driverController.x()
+    /*m_driverController.x()
       .onTrue(
         Commands.runOnce(
           () -> {
             m_Elevator.setGoal(MechConstants.kArmOffsetRads);
             m_Elevator.enable();
           }
-          , m_Elevator));
+          , m_Elevator));*/
     //Position 2
-    m_driverController.a()
+    /*m_driverController.a()
       .onTrue(
         Commands.runOnce(
           () -> {
-            m_Elevator.setGoal(/*Low*/ null);
+            m_Elevator.setGoal(null);
             m_Elevator.enable();
           }
-          , m_Elevator));
+          , m_Elevator));*/
     //Position 3
-    m_driverController.b()
+    /*m_driverController.b()
       .onTrue(
         Commands.runOnce(
           () -> {
-            m_Elevator.setGoal(/*Low*/ null);
+            m_Elevator.setGoal(null);
             m_Elevator.enable();
           }
-          , m_Elevator));
+          , m_Elevator));*/
+    m_driverController.rightTrigger().
+      whileTrue(m_Intake.intakeCommand());
+    
+    m_driverController.leftTrigger().
+      whileTrue(m_Intake.ejectCommand());
           
     
-    SmartDashboard.putData("Example Auto", new PathPlannerAuto("New Auto"));
+    //SmartDashboard.putData("Example Auto", new PathPlannerAuto("New Auto"));
   }
 
   /**
@@ -130,6 +139,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser.get();
+    return /*autoChooser.get()*/ null;
   }
 }
