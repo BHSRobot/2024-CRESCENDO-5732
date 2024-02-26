@@ -47,7 +47,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
  */
 public class RobotContainer {
   // The robot's subsystems
-  //private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   //private final Elevator m_Elevator = new Elevator();
   private final Intake m_Intake = new Intake();
 
@@ -67,7 +67,7 @@ public class RobotContainer {
     configureButtonBindings();
 
     // Configure default commands
-    /*m_robotDrive.setDefaultCommand(
+    m_robotDrive.setDefaultCommand(
         // The left stick controls translation of the robot.
         // Turning is controlled by the X axis of the right stick.
         new RunCommand(
@@ -76,7 +76,7 @@ public class RobotContainer {
                 -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
                 -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
                 true, false),
-            m_robotDrive));*/
+            m_robotDrive));
     
     m_Intake.setDefaultCommand(
       m_Intake.disabledCommand()
@@ -93,9 +93,9 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
-   /*m_driverController.y().
+   m_driverController.y().
       whileTrue(
-        new InstantCommand(() -> m_robotDrive.setX(), m_robotDrive));*/
+        new InstantCommand(() -> m_robotDrive.setX(), m_robotDrive));
     //Position 1
     /*m_driverController.x()
       .onTrue(
