@@ -21,7 +21,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Elevator extends ProfiledPIDSubsystem {
+public class ElevatorPivot extends ProfiledPIDSubsystem {
   private CANSparkMax m_ElevAngle;
 
   private RelativeEncoder m_EncAngEncoder;
@@ -29,7 +29,7 @@ public class Elevator extends ProfiledPIDSubsystem {
   private ArmFeedforward m_feedforward;
 
   /** Creates a new Elevator. */
-  public Elevator() {
+  public ElevatorPivot() {
     super(
       new ProfiledPIDController(
         MechConstants.kPElevAngle,

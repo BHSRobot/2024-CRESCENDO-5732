@@ -48,6 +48,10 @@ public final class Constants {
     public static final double kGElevAng = 1.45;
     public static final double kVElevAng = 2.10;
     public static final double kAElevAng = 0.06;
+
+    public static final double kGElevExt = 0.19;
+    public static final double kVElevExt = 1.53;
+    public static final double kAElevExt = 0.04;
   }
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of

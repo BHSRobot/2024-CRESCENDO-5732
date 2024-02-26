@@ -23,7 +23,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.MechConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.ElevatorPivot;
 import frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
