@@ -4,8 +4,11 @@
 
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
@@ -13,6 +16,7 @@ import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import frc.robot.Constants.MechConstants;
 
@@ -29,8 +33,9 @@ public class ElevatorExtend extends ProfiledPIDSubsystem {
             0,
             .03,
             // The motion profile constraints
-            new TrapezoidProfile.Constraints(.75, .25)));
+            new TrapezoidProfile.Constraints(.75, .15)));
     elevExtendNEO = new CANSparkMax(15, MotorType.kBrushless);
+    elevExtendNEO.setIdleMode(IdleMode.kBrake);
 
     m_feedforward = new ElevatorFeedforward(
       0,
@@ -39,6 +44,15 @@ public class ElevatorExtend extends ProfiledPIDSubsystem {
       MechConstants.kAElevExt);
 
     m_LenEncoder = elevExtendNEO.getEncoder();
+    m_LenEncoder.setPositionConversionFactor(MechConstants.kElevLenConversionFactor);
+    setGoal(0);
+  }
+
+  @Override
+  public void periodic() {
+    // TODO Auto-generated method stub
+    super.periodic();
+    Logger.recordOutput("Encoder Value: ", getMeasurement());
   }
 
   @Override
@@ -52,6 +66,6 @@ public class ElevatorExtend extends ProfiledPIDSubsystem {
 
   @Override
   public double getMeasurement() {
-    return 0;
+    return m_LenEncoder.getPosition();
   }
 }

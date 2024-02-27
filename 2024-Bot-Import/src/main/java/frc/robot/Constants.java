@@ -39,6 +39,8 @@ public final class Constants {
     public static final double kIElevLen = 0.01;
     public static final double kDElevLen = 0;
 
+    public static final double kElevLenConversionFactor = (1 / 4096) * 8 * Math.PI;
+
     public static final double kElevAngleMaxVelocity = 4.25;
     public static final double kElevAngleMaxAcceleration = .75;
 

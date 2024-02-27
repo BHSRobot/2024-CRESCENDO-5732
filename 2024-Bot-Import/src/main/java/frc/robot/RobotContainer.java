@@ -23,6 +23,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.MechConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.ElevatorExtend;
 import frc.robot.subsystems.ElevatorPivot;
 import frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -48,7 +49,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-  //private final Elevator m_Elevator = new Elevator();
+  private final ElevatorExtend m_ElevatorExtend = new ElevatorExtend();
   private final Intake m_Intake = new Intake();
 
   // The driver's controller
@@ -97,38 +98,37 @@ public class RobotContainer {
       whileTrue(
         new InstantCommand(() -> m_robotDrive.setX(), m_robotDrive));
     //Position 1
-    /*m_driverController.x()
+    m_driverController.x()
       .onTrue(
         Commands.runOnce(
           () -> {
-            m_Elevator.setGoal(MechConstants.kArmOffsetRads);
-            m_Elevator.enable();
+            m_ElevatorExtend.setGoal(1.2);
+            m_ElevatorExtend.enable();
           }
-          , m_Elevator));*/
+          , m_ElevatorExtend));
     //Position 2
-    /*m_driverController.a()
+    m_driverController.a()
       .onTrue(
         Commands.runOnce(
           () -> {
-            m_Elevator.setGoal(null);
-            m_Elevator.enable();
+            m_ElevatorExtend.setGoal(0);
+            m_ElevatorExtend.enable();
           }
-          , m_Elevator));*/
+          , m_ElevatorExtend));
     //Position 3
-    /*m_driverController.b()
+    m_driverController.b()
       .onTrue(
         Commands.runOnce(
           () -> {
-            m_Elevator.setGoal(null);
-            m_Elevator.enable();
+            m_ElevatorExtend.setGoal(null);
+            m_ElevatorExtend.enable();
           }
-          , m_Elevator));*/
+          , m_ElevatorExtend));
     m_driverController.rightTrigger().
       whileTrue(m_Intake.intakeCommand());
     
     m_driverController.leftTrigger().
-      whileTrue(m_Intake.ejectCommand());
-          
+      whileTrue(m_Intake.ejectCommand());          
     
     //SmartDashboard.putData("Example Auto", new PathPlannerAuto("New Auto"));
   }
