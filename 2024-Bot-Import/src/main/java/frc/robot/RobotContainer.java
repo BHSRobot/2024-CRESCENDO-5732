@@ -23,12 +23,16 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.MechConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.ElevatorExtend;
-import frc.robot.subsystems.ElevatorPivot;
+import frc.robot.subsystems.Elevator.ElevatorExtend;
+import frc.robot.subsystems.Elevator.ElevatorPivot;
+import frc.robot.subsystems.Shooter_Box.ShooterBox;
+import frc.robot.subsystems.Shooter_Box.ShooterBoxPivot;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Indexer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -50,7 +54,11 @@ public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final ElevatorExtend m_ElevatorExtend = new ElevatorExtend();
+  //private final ElevatorPivot m_ElevatorPivot = new ElevatorPivot();
   private final Intake m_Intake = new Intake();
+  private final Indexer m_Indexer = new Indexer();
+  //private final ShooterBox m_ShooterBox = new ShooterBox();
+  //private final ShooterBoxPivot m_ShooterBoxPivot = new ShooterBoxPivot();
 
   // The driver's controller
   CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
@@ -78,10 +86,7 @@ public class RobotContainer {
                 -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
                 true, false),
             m_robotDrive));
-    
-    m_Intake.setDefaultCommand(
-      m_Intake.disabledCommand()
-    );
+  
   }
 
   /**
@@ -97,15 +102,31 @@ public class RobotContainer {
    m_driverController.y().
       whileTrue(
         new InstantCommand(() -> m_robotDrive.setX(), m_robotDrive));
+
     //Position 1
-    m_driverController.x()
-      .onTrue(
-        Commands.runOnce(
+    /*m_driverController.x()
+    .onTrue(
+        new ParallelCommandGroup(
+          Commands.runOnce(
           () -> {
-            m_ElevatorExtend.setGoal(1.2);
+            m_ElevatorExtend.setGoal(1.0);
             m_ElevatorExtend.enable();
           }
-          , m_ElevatorExtend));
+          , m_ElevatorExtend),
+          Commands.runOnce(
+          () -> {
+            m_ElevatorPivot.setGoal(1.0);
+            m_ElevatorPivot.enable();
+          }
+          , m_ElevatorPivot),
+          Commands.runOnce(
+          () -> {
+            m_ShooterBoxPivot.setGoal(1.0);
+            m_ShooterBoxPivot.enable();
+          }
+          , m_ShooterBoxPivot)
+        ));
+
     //Position 2
     m_driverController.a()
       .onTrue(
@@ -114,7 +135,8 @@ public class RobotContainer {
             m_ElevatorExtend.setGoal(0);
             m_ElevatorExtend.enable();
           }
-          , m_ElevatorExtend));
+          , m_ElevatorExtend));*/
+
     //Position 3
     m_driverController.b()
       .onTrue(
@@ -124,11 +146,35 @@ public class RobotContainer {
             m_ElevatorExtend.enable();
           }
           , m_ElevatorExtend));
+
+    //Elevator manual move
+    m_driverController.x().
+          onTrue(
+            new RunCommand(
+              () -> m_ElevatorExtend.setManualSpeed(.5),
+              m_ElevatorExtend)).
+          onFalse(
+            new RunCommand(
+              ()-> m_ElevatorExtend.setManualSpeed(0),
+              m_ElevatorExtend));
+
     m_driverController.rightTrigger().
-      whileTrue(m_Intake.intakeCommand());
+      onTrue(m_Intake.intakeCommand())
+      .onFalse(m_Intake.disabledCommand());
     
     m_driverController.leftTrigger().
-      whileTrue(m_Intake.ejectCommand());          
+      onTrue(m_Intake.ejectCommand())
+      .onTrue(m_Intake.disabledCommand()); 
+      
+    /*m_driverController.rightBumper().
+      whileTrue(m_ShooterBox.enabledCommand())
+      .whileFalse(m_Intake.disabledCommand());
+
+    m_driverController.leftBumper().
+      whileTrue(m_Indexer.forwardCommand())
+      .whileFalse(m_Indexer.disabledCommand());*/
+
+    
     
     //SmartDashboard.putData("Example Auto", new PathPlannerAuto("New Auto"));
   }

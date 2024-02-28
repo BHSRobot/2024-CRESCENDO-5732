@@ -11,6 +11,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.Unit;
 
 import java.util.Map;
 
@@ -31,34 +32,43 @@ import edu.wpi.first.wpilibj.RobotBase;
 public final class Constants {
   public static final class MechConstants {
 
+    //Elevator Pivot PID
     public static final double kPElevAngle = 0.04;
     public static final double kIElevAngle = 0.01;
     public static final double kDElevAngle = 0;
 
+    //Elevator Extension PID
     public static final double kPElevLen = 0.05;
     public static final double kIElevLen = 0.01;
     public static final double kDElevLen = 0;
 
-    public static final double kElevLenConversionFactor = (1 / 4096) * 8 * Math.PI;
+    public static final double kElevLenConversionFactor = Units.feetToMeters((2 * Math.PI / 20) / 12);
 
     public static final double kElevAngleMaxVelocity = 4.25;
     public static final double kElevAngleMaxAcceleration = .75;
 
-    public static final double kElevAngleConversionFactor = 2 * Math.PI / 180;
+    public static final double kElevAngleConversionFactor = Units.rotationsToRadians((1/4096) / 108);
     public static final double kArmOffsetRads = 0.5;
 
-    public static final double kGElevAng = 1.45;
+    //Elevator Pivot Feedforward
+    public static final double kGElevAng = 1.35;
     public static final double kVElevAng = 2.10;
     public static final double kAElevAng = 0.06;
 
+    //Elevator Extension Feedforward
     public static final double kGElevExt = 0.19;
     public static final double kVElevExt = 1.53;
     public static final double kAElevExt = 0.04;
+
+    //Wrist Pivot Feedforward
+    public static final double kGWrist = 0.99;
+    public static final double kVWrist = 0.78;
+    public static final double kAWrist = 0.03;
   }
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
-    public static final double kMaxSpeedMetersPerSecond = 1.25; // Max speed = 5.0
+    public static final double kMaxSpeedMetersPerSecond = 5; // Max speed = 5.0
     public static final double kMaxAngularSpeed = 2.3 * Math.PI; // radians per second  max is 4 so far?
 
     public static final double kDirectionSlewRate = 2.3; // radians per second

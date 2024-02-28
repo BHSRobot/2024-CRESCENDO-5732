@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.subsystems.Elevator;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -50,9 +50,8 @@ public class ElevatorExtend extends ProfiledPIDSubsystem {
 
   @Override
   public void periodic() {
-    // TODO Auto-generated method stub
     super.periodic();
-    Logger.recordOutput("Encoder Value: ", getMeasurement());
+    Logger.recordOutput("EncoderValue: ", getMeasurement());
   }
 
   @Override
@@ -62,6 +61,11 @@ public class ElevatorExtend extends ProfiledPIDSubsystem {
     double feedforward = m_feedforward.calculate(setpoint.position, setpoint.velocity);
     // Add the feedforward to the PID output to get the motor output
     elevExtendNEO.setVoltage(output + feedforward);
+  }
+
+  //Manual For testing
+  public void setManualSpeed(double speed) {
+    elevExtendNEO.set(speed);
   }
 
   @Override

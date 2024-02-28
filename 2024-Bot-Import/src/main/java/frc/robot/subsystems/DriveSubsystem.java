@@ -133,6 +133,8 @@ public class DriveSubsystem extends SubsystemBase {
     Logger.recordOutput("Gyro Angle", m_gyro.getAngle());
     //Logger.recordOutput("Position", new SwerveModulePosition[] {});
     Logger.recordOutput("Pose2d", m_odometry.getPoseMeters());
+    Logger.recordOutput("SwerveModuleStates", getModuleStates());
+    Logger.recordOutput("Speed", getRobotRelativeSpeeds());
   }
 
 /*new SwerveModulePosition[] {
@@ -283,11 +285,6 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearRight.getState()
     };
   }
-
-{
-  Logger.recordOutput("SwerveModuleStates", getModuleStates());
-  Logger.recordOutput("Speed", getRobotRelativeSpeeds());
-}
 
   /**
    * Sets the swerve ModuleStates.

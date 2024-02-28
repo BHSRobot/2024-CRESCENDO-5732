@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.subsystems.Elevator;
 import frc.robot.Constants;
 import frc.robot.Constants.MechConstants;
 
@@ -49,12 +49,14 @@ public class ElevatorPivot extends ProfiledPIDSubsystem {
 
     //Absolute
     m_EncAngEncoder = m_ElevAngle.getEncoder();
+    m_EncAngEncoder.setPositionConversionFactor(MechConstants.kElevAngleConversionFactor);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    Logger.recordOutput("Elevator Pivot Angle: ", getMeasurement());
+    super.periodic();
+    Logger.recordOutput("ElevatorPivotAngle: ", getMeasurement());
   }
 
   @Override
