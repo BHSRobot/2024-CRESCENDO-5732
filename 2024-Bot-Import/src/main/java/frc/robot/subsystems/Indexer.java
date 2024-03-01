@@ -4,12 +4,14 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.MechConstants;
 
 public class Indexer extends SubsystemBase {
   private CANSparkMax indexNEO;
@@ -19,7 +21,8 @@ public class Indexer extends SubsystemBase {
 
   /** Creates a new Shooter. */
   public Indexer() {
-    indexNEO = new CANSparkMax(14, MotorType.kBrushless);
+    indexNEO = new CANSparkMax(MechConstants.kIndexerID, MotorType.kBrushless);
+    indexNEO.setIdleMode(IdleMode.kBrake);
   }
 
   public enum IndexState {
@@ -32,10 +35,10 @@ public class Indexer extends SubsystemBase {
       //Roller moves 4 times as fast as chamber
       switch (state) {
           case FORWARD:
-              indexNEO.set(-1);
+              indexNEO.set(.75);
               break;
           case BACK:
-              indexNEO.set(1);
+              indexNEO.set(-.75);
               break;
           case DISABLED:
               indexNEO.set(0);

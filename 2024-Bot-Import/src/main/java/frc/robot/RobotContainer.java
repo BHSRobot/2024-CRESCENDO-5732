@@ -53,24 +53,29 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  //Elevator stuff
   private final ElevatorExtend m_ElevatorExtend = new ElevatorExtend();
-  //private final ElevatorPivot m_ElevatorPivot = new ElevatorPivot();
+  private final ElevatorPivot m_ElevatorPivot = new ElevatorPivot();
+  //Intake/Index
   private final Intake m_Intake = new Intake();
   private final Indexer m_Indexer = new Indexer();
-  //private final ShooterBox m_ShooterBox = new ShooterBox();
-  //private final ShooterBoxPivot m_ShooterBoxPivot = new ShooterBoxPivot();
+  //Shooter box stuff
+  private final ShooterBox m_ShooterBox = new ShooterBox();
+  private final ShooterBoxPivot m_ShooterBoxPivot = new ShooterBoxPivot();
 
   // The driver's controller
   CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
-  //private final LoggedDashboardChooser<Command> autoChooser;
+  CommandXboxController m_OpController = new CommandXboxController(OIConstants.kOperatorControllerPort);
+
+  private final LoggedDashboardChooser<Command> autoChooser;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
 
   public RobotContainer() {
-    //autoChooser = new LoggedDashboardChooser<>("AutoChooser", AutoBuilder.buildAutoChooser());
-    //SmartDashboard.putData("Auto Mode", AutoBuilder.buildAutoChooser());
+    autoChooser = new LoggedDashboardChooser<>("AutoChooser", AutoBuilder.buildAutoChooser());
+    SmartDashboard.putData("Auto Mode", AutoBuilder.buildAutoChooser());
 
     // Configure the button bindings
     configureButtonBindings();
@@ -104,7 +109,7 @@ public class RobotContainer {
         new InstantCommand(() -> m_robotDrive.setX(), m_robotDrive));
 
     //Position 1
-    /*m_driverController.x()
+    /*m_OpController.x()
     .onTrue(
         new ParallelCommandGroup(
           Commands.runOnce(
@@ -128,27 +133,27 @@ public class RobotContainer {
         ));
 
     //Position 2
-    m_driverController.a()
+    m_OpController.a()
       .onTrue(
         Commands.runOnce(
           () -> {
             m_ElevatorExtend.setGoal(0);
             m_ElevatorExtend.enable();
           }
-          , m_ElevatorExtend));*/
+          , m_ElevatorExtend));
 
     //Position 3
-    m_driverController.b()
+    m_OpController.b()
       .onTrue(
         Commands.runOnce(
           () -> {
             m_ElevatorExtend.setGoal(null);
             m_ElevatorExtend.enable();
           }
-          , m_ElevatorExtend));
+          , m_ElevatorExtend));*/
 
     //Elevator manual move
-    m_driverController.x().
+    m_OpController.a().
           onTrue(
             new RunCommand(
               () -> m_ElevatorExtend.setManualSpeed(.5),
@@ -157,22 +162,39 @@ public class RobotContainer {
             new RunCommand(
               ()-> m_ElevatorExtend.setManualSpeed(0),
               m_ElevatorExtend));
-
+    
+    m_OpController.b().
+          onTrue(
+            new RunCommand(
+              () -> m_ElevatorExtend.setManualSpeed(-.5),
+              m_ElevatorExtend)).
+          onFalse(
+            new RunCommand(
+              ()-> m_ElevatorExtend.setManualSpeed(0),
+              m_ElevatorExtend));
+    
+    //Driver Intake
     m_driverController.rightTrigger().
       onTrue(m_Intake.intakeCommand())
       .onFalse(m_Intake.disabledCommand());
     
     m_driverController.leftTrigger().
       onTrue(m_Intake.ejectCommand())
-      .onTrue(m_Intake.disabledCommand()); 
-      
-    /*m_driverController.rightBumper().
-      whileTrue(m_ShooterBox.enabledCommand())
-      .whileFalse(m_Intake.disabledCommand());
+      .onFalse(m_Intake.disabledCommand()); 
 
-    m_driverController.leftBumper().
+    //Operator Indexer
+    m_OpController.rightBumper().
       whileTrue(m_Indexer.forwardCommand())
-      .whileFalse(m_Indexer.disabledCommand());*/
+      .whileFalse(m_Indexer.disabledCommand());
+
+    m_OpController.leftBumper().
+      whileTrue(m_Indexer.backCommand())
+      .whileFalse(m_Indexer.disabledCommand());
+
+    //Shooter Box Front Shooter(s)
+    m_OpController.rightTrigger().
+      onTrue(m_ShooterBox.enabledCommand())
+      .onFalse(m_ShooterBox.disabledCommand());
 
     
     

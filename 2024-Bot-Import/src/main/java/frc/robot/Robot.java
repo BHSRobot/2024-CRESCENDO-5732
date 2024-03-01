@@ -147,7 +147,7 @@ public class Robot extends LoggedRobot {
   
   @Override
   public void teleopPeriodic() {}
-  
+  /* bushi was here */ 
   @Override
   public void testInit() {
     // Cancels all running commands at the start of test mode.

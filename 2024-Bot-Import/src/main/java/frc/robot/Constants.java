@@ -32,7 +32,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 public final class Constants {
   public static final class MechConstants {
 
-    //Elevator Pivot PID
+    //Elevator/Wrist Pivot PID
     public static final double kPElevAngle = 0.04;
     public static final double kIElevAngle = 0.01;
     public static final double kDElevAngle = 0;
@@ -42,12 +42,13 @@ public final class Constants {
     public static final double kIElevLen = 0.01;
     public static final double kDElevLen = 0;
 
-    public static final double kElevLenConversionFactor = Units.feetToMeters((2 * Math.PI / 20) / 12);
+    public static final double kElevLenConversionFactor = (2 * Math.PI / 20) / 12;
+    public static final double kElevAngleConversionFactor = (4096 * 108);  // gear ratio 108
+    public static final double kWristAngleConversionFactor = (4096 * 40); //gear ratio 40
 
-    public static final double kElevAngleMaxVelocity = 4.25;
-    public static final double kElevAngleMaxAcceleration = .75;
+    public static final double kElevAngleMaxVelocity = 2.25;
+    public static final double kElevAngleMaxAcceleration = .25;
 
-    public static final double kElevAngleConversionFactor = Units.rotationsToRadians((1/4096) / 108);
     public static final double kArmOffsetRads = 0.5;
 
     //Elevator Pivot Feedforward
@@ -64,12 +65,24 @@ public final class Constants {
     public static final double kGWrist = 0.99;
     public static final double kVWrist = 0.78;
     public static final double kAWrist = 0.03;
+
+    //CAN Spark ID's
+    public static final int kElevPivID = 12;
+    public static final int kElevExtID = 13;
+
+    public static final int kWristPivID = 14;
+    public static final int kWristNEOTopID = 15;
+    public static final int kWristNEOBottomID = 16;
+
+    public static final int kIntakeID = 17;
+
+    public static final int kIndexerID = 18;
   }
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
-    public static final double kMaxSpeedMetersPerSecond = 5; // Max speed = 5.0
-    public static final double kMaxAngularSpeed = 2.3 * Math.PI; // radians per second  max is 4 so far?
+    public static final double kMaxSpeedMetersPerSecond = 0.8; // Max speed = 5.0
+    public static final double kMaxAngularSpeed = 1.25 * Math.PI; // radians per second  max is 4 so far?
 
     public static final double kDirectionSlewRate = 2.3; // radians per second
     public static final double kMagnitudeSlewRate = 2; // percent per second (1 = 100%)
@@ -159,6 +172,7 @@ public final class Constants {
 
   public static final class OIConstants {
     public static final int kDriverControllerPort = 0;
+    public static final int kOperatorControllerPort = 1;
     public static final double kDriveDeadband = 0.05;
   }
 

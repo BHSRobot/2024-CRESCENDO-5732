@@ -6,10 +6,12 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.MechConstants;
 
 public class Intake extends SubsystemBase {
   private CANSparkMax neo1;
@@ -19,7 +21,8 @@ public class Intake extends SubsystemBase {
 
   /** Creates a new Shooter. */
   public Intake() {
-    neo1 = new CANSparkMax(13, MotorType.kBrushless);
+    neo1 = new CANSparkMax(MechConstants.kIntakeID, MotorType.kBrushless);
+    neo1.setIdleMode(IdleMode.kBrake);
   }
 
   public enum IntakeState {

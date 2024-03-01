@@ -4,12 +4,14 @@
 
 package frc.robot.subsystems.Shooter_Box;
 
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.MechConstants;
 
 public class ShooterBox extends SubsystemBase {
   private CANSparkMax ShooterNeo1;
@@ -19,8 +21,11 @@ public class ShooterBox extends SubsystemBase {
 
   /** Creates a new Shooter. */
   public ShooterBox() {
-    ShooterNeo1 = new CANSparkMax(15, MotorType.kBrushless);
-    ShooterNeo2 = new CANSparkMax(16, MotorType.kBrushless);
+    ShooterNeo1 = new CANSparkMax(MechConstants.kWristNEOTopID, MotorType.kBrushless);
+    ShooterNeo2 = new CANSparkMax(MechConstants.kWristNEOBottomID, MotorType.kBrushless);
+
+    ShooterNeo1.setIdleMode(IdleMode.kBrake);
+    ShooterNeo2.setIdleMode(IdleMode.kBrake);
   }
 
   public enum ShooterState {
@@ -36,8 +41,8 @@ public class ShooterBox extends SubsystemBase {
               ShooterNeo2.set(0);
               break;
           case ENABLED:
-              ShooterNeo1.set(1);
-              ShooterNeo2.set(1);
+              ShooterNeo1.set(-1);
+              ShooterNeo2.set(-1);
               break;
       }
   }

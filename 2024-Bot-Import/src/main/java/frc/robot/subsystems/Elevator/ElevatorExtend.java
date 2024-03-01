@@ -34,7 +34,7 @@ public class ElevatorExtend extends ProfiledPIDSubsystem {
             .03,
             // The motion profile constraints
             new TrapezoidProfile.Constraints(.75, .15)));
-    elevExtendNEO = new CANSparkMax(15, MotorType.kBrushless);
+    elevExtendNEO = new CANSparkMax(MechConstants.kElevExtID, MotorType.kBrushless);
     elevExtendNEO.setIdleMode(IdleMode.kBrake);
 
     m_feedforward = new ElevatorFeedforward(
@@ -45,13 +45,14 @@ public class ElevatorExtend extends ProfiledPIDSubsystem {
 
     m_LenEncoder = elevExtendNEO.getEncoder();
     m_LenEncoder.setPositionConversionFactor(MechConstants.kElevLenConversionFactor);
+    m_LenEncoder.setPosition(0);
     setGoal(0);
   }
 
   @Override
   public void periodic() {
     super.periodic();
-    Logger.recordOutput("EncoderValue: ", getMeasurement());
+    Logger.recordOutput("Elevator Extend Encoder", getMeasurement());
   }
 
   @Override
