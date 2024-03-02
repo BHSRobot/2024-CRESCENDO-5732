@@ -43,8 +43,9 @@ public final class Constants {
     public static final double kDElevLen = 0;
 
     public static final double kElevLenConversionFactor = (2 * Math.PI / 20) / 12;
-    public static final double kElevAngleConversionFactor = (4096 * 108);  // gear ratio 108
-    public static final double kWristAngleConversionFactor = (4096 * 40); //gear ratio 40
+    public static final double kElevAngleConversionFactor = (2 * Math.PI) / 108;  // gear ratio 108
+    public static final double kWristAngleConversionFactor = ((2 * Math.PI) / 40); //gear ratio 40
+    public static final double kWristAngleOffest = 0.05;
 
     public static final double kElevAngleMaxVelocity = 2.25;
     public static final double kElevAngleMaxAcceleration = .25;
@@ -81,8 +82,8 @@ public final class Constants {
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
-    public static final double kMaxSpeedMetersPerSecond = 0.8; // Max speed = 5.0
-    public static final double kMaxAngularSpeed = 1.25 * Math.PI; // radians per second  max is 4 so far?
+    public static final double kMaxSpeedMetersPerSecond = 4.25; // Max speed = 5.0
+    public static final double kMaxAngularSpeed = 2.25 * Math.PI; // radians per second  max is 4 so far?
 
     public static final double kDirectionSlewRate = 2.3; // radians per second
     public static final double kMagnitudeSlewRate = 2; // percent per second (1 = 100%)

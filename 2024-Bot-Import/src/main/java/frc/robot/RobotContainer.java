@@ -25,8 +25,10 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Elevator.ElevatorExtend;
 import frc.robot.subsystems.Elevator.ElevatorPivot;
+import frc.robot.subsystems.Elevator.ElevatorExtend.ElevExtState;
 import frc.robot.subsystems.Shooter_Box.ShooterBox;
 import frc.robot.subsystems.Shooter_Box.ShooterBoxPivot;
+import frc.robot.subsystems.Shooter_Box.ShooterBoxPivot.ShootPivState;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Indexer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -34,6 +36,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -54,7 +57,7 @@ public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   //Elevator stuff
-  private final ElevatorExtend m_ElevatorExtend = new ElevatorExtend();
+  // private final ElevatorExtend m_ElevatorExtend = new ElevatorExtend();
   private final ElevatorPivot m_ElevatorPivot = new ElevatorPivot();
   //Intake/Index
   private final Intake m_Intake = new Intake();
@@ -108,97 +111,46 @@ public class RobotContainer {
       whileTrue(
         new InstantCommand(() -> m_robotDrive.setX(), m_robotDrive));
 
-    //Position 1
-    /*m_OpController.x()
-    .onTrue(
-        new ParallelCommandGroup(
-          Commands.runOnce(
-          () -> {
-            m_ElevatorExtend.setGoal(1.0);
-            m_ElevatorExtend.enable();
-          }
-          , m_ElevatorExtend),
-          Commands.runOnce(
-          () -> {
-            m_ElevatorPivot.setGoal(1.0);
-            m_ElevatorPivot.enable();
-          }
-          , m_ElevatorPivot),
-          Commands.runOnce(
-          () -> {
-            m_ShooterBoxPivot.setGoal(1.0);
-            m_ShooterBoxPivot.enable();
-          }
-          , m_ShooterBoxPivot)
-        ));
-
-    //Position 2
-    m_OpController.a()
-      .onTrue(
-        Commands.runOnce(
-          () -> {
-            m_ElevatorExtend.setGoal(0);
-            m_ElevatorExtend.enable();
-          }
-          , m_ElevatorExtend));
-
-    //Position 3
-    m_OpController.b()
-      .onTrue(
-        Commands.runOnce(
-          () -> {
-            m_ElevatorExtend.setGoal(null);
-            m_ElevatorExtend.enable();
-          }
-          , m_ElevatorExtend));*/
-
-    //Elevator manual move
-    m_OpController.a().
-          onTrue(
-            new RunCommand(
-              () -> m_ElevatorExtend.setManualSpeed(.5),
-              m_ElevatorExtend)).
-          onFalse(
-            new RunCommand(
-              ()-> m_ElevatorExtend.setManualSpeed(0),
-              m_ElevatorExtend));
-    
-    m_OpController.b().
-          onTrue(
-            new RunCommand(
-              () -> m_ElevatorExtend.setManualSpeed(-.5),
-              m_ElevatorExtend)).
-          onFalse(
-            new RunCommand(
-              ()-> m_ElevatorExtend.setManualSpeed(0),
-              m_ElevatorExtend));
+        /* 
+      m_OpController.y().
+       onTrue(
+         Commands.runOnce(
+           () -> {
+             m_ShooterBoxPivot.setGoal(1);
+             m_ShooterBoxPivot.enable();
+           },
+           m_ShooterBoxPivot
+         )
+       );
+       */
+      
     
     //Driver Intake
     m_driverController.rightTrigger().
-      onTrue(m_Intake.intakeCommand())
-      .onFalse(m_Intake.disabledCommand());
+      onTrue(m_Intake.intakeCommand().alongWith(m_Indexer.forwardCommand()))
+      .onFalse(m_Intake.disabledCommand().alongWith(m_Indexer.disabledCommand()));
     
     m_driverController.leftTrigger().
-      onTrue(m_Intake.ejectCommand())
-      .onFalse(m_Intake.disabledCommand()); 
-
-    //Operator Indexer
-    m_OpController.rightBumper().
-      whileTrue(m_Indexer.forwardCommand())
-      .whileFalse(m_Indexer.disabledCommand());
-
-    m_OpController.leftBumper().
-      whileTrue(m_Indexer.backCommand())
-      .whileFalse(m_Indexer.disabledCommand());
+      onTrue(m_Intake.ejectCommand().alongWith(m_Indexer.backCommand()))
+      .onFalse(m_Intake.disabledCommand().alongWith(m_Indexer.disabledCommand())); 
 
     //Shooter Box Front Shooter(s)
     m_OpController.rightTrigger().
       onTrue(m_ShooterBox.enabledCommand())
       .onFalse(m_ShooterBox.disabledCommand());
-
     
     
     //SmartDashboard.putData("Example Auto", new PathPlannerAuto("New Auto"));
+  }
+
+  public Command shootThenBackUp() {
+    return new RunCommand(
+      () -> m_ShooterBox.enabledCommand(),
+      m_ShooterBox).withTimeout(3);
+    // .alongWith(
+    //   new RunCommand(
+    //     () -> m_Indexer.forwardCommand()
+    //     , m_Indexer));
   }
 
   /**
@@ -207,6 +159,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return /*autoChooser.get()*/ null;
-  }
+    return shootThenBackUp();
+  }          
 }

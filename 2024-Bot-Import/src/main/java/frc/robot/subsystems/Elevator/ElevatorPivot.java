@@ -5,6 +5,8 @@
 package frc.robot.subsystems.Elevator;
 import frc.robot.Constants;
 import frc.robot.Constants.MechConstants;
+import frc.robot.subsystems.Shooter_Box.ShooterBoxPivot;
+import frc.robot.subsystems.Shooter_Box.ShooterBoxPivot.ShootPivState;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -20,6 +22,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -51,9 +54,10 @@ public class ElevatorPivot extends ProfiledPIDSubsystem {
 
     //Absolute
     m_EncAngEncoder = m_ElevAngle.getEncoder();
+    m_EncAngEncoder.setPositionConversionFactor(MechConstants.kElevAngleConversionFactor);
     m_EncAngEncoder.setPosition(0);
     setGoal(0);
-    m_ElevAngle.setIdleMode(IdleMode.kCoast);
+    m_ElevAngle.setIdleMode(IdleMode.kBrake);
   }
 
   @Override
@@ -61,6 +65,7 @@ public class ElevatorPivot extends ProfiledPIDSubsystem {
     // This method will be called once per scheduler run
     super.periodic();
     Logger.recordOutput("Elevator Pivot Angle", getMeasurement());
+    SmartDashboard.putNumber("Elevator Pivot Angle", getMeasurement());
   }
 
   @Override
@@ -69,12 +74,15 @@ public class ElevatorPivot extends ProfiledPIDSubsystem {
     // Calculate the feedforward from the sepoint
     double feedforward = m_feedforward.calculate(setpoint.position, setpoint.velocity);
     // Add the feedforward to the PID output to get the motor output
-    m_ElevAngle.setVoltage(output + feedforward);
+    if (ShooterBoxPivot.getState() == ShootPivState.ENABLED)
+      m_ElevAngle.setVoltage(0);
+    else 
+      m_ElevAngle.setVoltage(output + feedforward);
   }
 
   @Override
   protected double getMeasurement() {
     // TODO Auto-generated method stub
-    return m_EncAngEncoder.getPosition() * 20;
+    return m_EncAngEncoder.getPosition();
   }
 }

@@ -19,11 +19,15 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import frc.robot.Constants.MechConstants;
+import frc.robot.subsystems.Shooter_Box.ShooterBoxPivot;
+import frc.robot.subsystems.Shooter_Box.ShooterBoxPivot.ShootPivState;
 
 public class ElevatorExtend extends ProfiledPIDSubsystem {
   private CANSparkMax elevExtendNEO;
   private RelativeEncoder m_LenEncoder;
   private ElevatorFeedforward m_feedforward;
+
+  public static ElevExtState ElevState;
   /** Creates a new ElevatorExtend. */
   public ElevatorExtend() {
     super(
@@ -33,7 +37,7 @@ public class ElevatorExtend extends ProfiledPIDSubsystem {
             0,
             .03,
             // The motion profile constraints
-            new TrapezoidProfile.Constraints(.75, .15)));
+            new TrapezoidProfile.Constraints(1.75, .55)));
     elevExtendNEO = new CANSparkMax(MechConstants.kElevExtID, MotorType.kBrushless);
     elevExtendNEO.setIdleMode(IdleMode.kBrake);
 
@@ -49,10 +53,16 @@ public class ElevatorExtend extends ProfiledPIDSubsystem {
     setGoal(0);
   }
 
+  public enum ElevExtState {
+    ENABLED,
+    DISABLED
+  }
+
   @Override
   public void periodic() {
     super.periodic();
     Logger.recordOutput("Elevator Extend Encoder", getMeasurement());
+    SmartDashboard.putNumber("Elevator Extend Encoder", getMeasurement());
   }
 
   @Override
@@ -61,7 +71,10 @@ public class ElevatorExtend extends ProfiledPIDSubsystem {
     // Calculate the feedforward from the sepoint
     double feedforward = m_feedforward.calculate(setpoint.position, setpoint.velocity);
     // Add the feedforward to the PID output to get the motor output
-    elevExtendNEO.setVoltage(output + feedforward);
+    if (getMeasurement() >= 1.25 || ShooterBoxPivot.getState() == ShootPivState.ENABLED)
+      elevExtendNEO.setVoltage(0);
+    else
+      elevExtendNEO.setVoltage(output + feedforward);
   }
 
   //Manual For testing
@@ -72,5 +85,13 @@ public class ElevatorExtend extends ProfiledPIDSubsystem {
   @Override
   public double getMeasurement() {
     return m_LenEncoder.getPosition();
+  }
+
+  public static ElevExtState getState() {
+    return ElevState;
+  }
+
+  public void setState(ElevExtState state) {
+    ElevState = state;
   }
 }

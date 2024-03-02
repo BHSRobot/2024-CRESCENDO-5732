@@ -35,10 +35,10 @@ public class Indexer extends SubsystemBase {
       //Roller moves 4 times as fast as chamber
       switch (state) {
           case FORWARD:
-              indexNEO.set(.75);
+              indexNEO.set(.25);
               break;
           case BACK:
-              indexNEO.set(-.75);
+              indexNEO.set(-.25);
               break;
           case DISABLED:
               indexNEO.set(0);
