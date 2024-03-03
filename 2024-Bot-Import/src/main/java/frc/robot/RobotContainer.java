@@ -38,6 +38,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import java.util.List;
@@ -45,7 +46,10 @@ import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -111,18 +115,18 @@ public class RobotContainer {
       whileTrue(
         new InstantCommand(() -> m_robotDrive.setX(), m_robotDrive));
 
-        /* 
+       
       m_OpController.y().
        onTrue(
          Commands.runOnce(
            () -> {
-             m_ShooterBoxPivot.setGoal(1);
+             m_ShooterBoxPivot.setGoal(3);
              m_ShooterBoxPivot.enable();
            },
            m_ShooterBoxPivot
          )
        );
-       */
+       
       
     
     //Driver Intake
@@ -144,13 +148,37 @@ public class RobotContainer {
   }
 
   public Command shootThenBackUp() {
-    return new RunCommand(
-      () -> m_ShooterBox.enabledCommand(),
-      m_ShooterBox).withTimeout(3);
-    // .alongWith(
-    //   new RunCommand(
-    //     () -> m_Indexer.forwardCommand()
-    //     , m_Indexer));
+    return m_ShooterBox.enabledCommand()
+      .withTimeout(2.5)
+      .andThen(
+        new ParallelCommandGroup(
+          m_ShooterBox.enabledCommand(),
+          m_Indexer.forwardCommand()
+        )
+        .withTimeout(2.5)
+      )
+      .andThen(
+        new ParallelCommandGroup(
+          m_ShooterBox.disabledCommand(),
+          m_Indexer.disabledCommand()
+        )
+      )
+      .withTimeout(1)
+      .andThen(shootThenTaxiTrajectoryCommand());
+      
+  }
+
+  public Command shootThenTaxiTrajectoryCommand() {
+    PathPlannerPath path = PathPlannerPath.fromPathFile("shootThenTaxi.path");
+
+    PathConstraints constraints = new PathConstraints(
+      1.75,
+      .45,
+      2.35,
+      .55);
+    Command pathFindCommand = AutoBuilder.pathfindThenFollowPath(path, constraints);
+
+    return pathFindCommand;
   }
 
   /**

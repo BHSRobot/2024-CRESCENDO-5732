@@ -48,15 +48,15 @@ public class ShooterBox extends SubsystemBase {
   }
 
   public Command disabledCommand() {
-      return runEnd(() -> {
+      return runOnce(() -> {
           setShooterState(ShooterState.DISABLED);
-      }, () -> {});
+      });
   }
 
   public Command enabledCommand() {
-      return runEnd(() -> {
+      return runOnce(() -> {
           setShooterState(ShooterState.ENABLED);
-      }, () -> {});
+      });
   }
 
   public void setShooterState(ShooterState state) {
