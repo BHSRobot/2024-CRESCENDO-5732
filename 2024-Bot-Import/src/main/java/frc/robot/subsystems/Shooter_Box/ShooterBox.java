@@ -26,6 +26,8 @@ public class ShooterBox extends SubsystemBase {
 
     ShooterNeo1.setIdleMode(IdleMode.kBrake);
     ShooterNeo2.setIdleMode(IdleMode.kBrake);
+
+    ShooterNeo2.follow(ShooterNeo1);
   }
 
   public enum ShooterState {
@@ -38,11 +40,9 @@ public class ShooterBox extends SubsystemBase {
       switch (state) {
           case DISABLED:
               ShooterNeo1.set(0);
-              ShooterNeo2.set(0);
               break;
           case ENABLED:
               ShooterNeo1.set(-1);
-              ShooterNeo2.set(-1);
               break;
       }
   }
@@ -61,6 +61,10 @@ public class ShooterBox extends SubsystemBase {
 
   public void setShooterState(ShooterState state) {
     this.state = state;
+  }
+  
+  public void setShooterSpeed(double output) {
+    ShooterNeo1.set(output);
   }
 
 }

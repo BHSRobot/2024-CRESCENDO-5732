@@ -28,6 +28,7 @@ import frc.robot.subsystems.Elevator.ElevatorPivot;
 import frc.robot.subsystems.Elevator.ElevatorExtend.ElevExtState;
 import frc.robot.subsystems.Shooter_Box.ShooterBox;
 import frc.robot.subsystems.Shooter_Box.ShooterBoxPivot;
+import frc.robot.subsystems.Shooter_Box.ShooterBox.ShooterState;
 import frc.robot.subsystems.Shooter_Box.ShooterBoxPivot.ShootPivState;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Indexer;
@@ -62,7 +63,7 @@ public class RobotContainer {
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   //Elevator stuff
   // private final ElevatorExtend m_ElevatorExtend = new ElevatorExtend();
-  private final ElevatorPivot m_ElevatorPivot = new ElevatorPivot();
+  // private final ElevatorPivot m_ElevatorPivot = new ElevatorPivot();
   //Intake/Index
   private final Intake m_Intake = new Intake();
   private final Indexer m_Indexer = new Indexer();
@@ -96,7 +97,7 @@ public class RobotContainer {
                 -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
                 -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
                 -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
-                true, false),
+                true, true),
             m_robotDrive));
   
   }
@@ -116,16 +117,27 @@ public class RobotContainer {
         new InstantCommand(() -> m_robotDrive.setX(), m_robotDrive));
 
        
-      m_OpController.y().
-       onTrue(
-         Commands.runOnce(
-           () -> {
-             m_ShooterBoxPivot.setGoal(3);
-             m_ShooterBoxPivot.enable();
-           },
-           m_ShooterBoxPivot
-         )
-       );
+      // m_OpController.y().
+      //  onTrue(
+      //    Commands.runOnce(
+      //      () -> {
+      //        m_ShooterBoxPivot.setGoal(.6);
+      //        m_ShooterBoxPivot.enable();
+      //      },
+      //      m_ShooterBoxPivot
+      //    )
+      //  );
+
+      //  m_OpController.x().
+      //  onTrue(
+      //    Commands.runOnce(
+      //      () -> {
+      //        m_ShooterBoxPivot.setGoal(MechConstants.kWristAngleOffest);
+      //        m_ShooterBoxPivot.enable();
+      //      },
+      //      m_ShooterBoxPivot
+      //    )
+      //  );
        
       
     
@@ -141,39 +153,31 @@ public class RobotContainer {
     //Shooter Box Front Shooter(s)
     m_OpController.rightTrigger().
       onTrue(m_ShooterBox.enabledCommand())
-      .onFalse(m_ShooterBox.disabledCommand());
-    
-    
-    //SmartDashboard.putData("Example Auto", new PathPlannerAuto("New Auto"));
+      .onFalse(m_ShooterBox.disabledCommand());    
   }
 
   public Command shootThenBackUp() {
-    return m_ShooterBox.enabledCommand()
-      .withTimeout(2.5)
-      .andThen(
-        new ParallelCommandGroup(
-          m_ShooterBox.enabledCommand(),
-          m_Indexer.forwardCommand()
-        )
-        .withTimeout(2.5)
-      )
-      .andThen(
-        new ParallelCommandGroup(
-          m_ShooterBox.disabledCommand(),
-          m_Indexer.disabledCommand()
-        )
-      )
-      .withTimeout(1)
-      .andThen(shootThenTaxiTrajectoryCommand());
-      
+    return new RunCommand(
+      () -> m_ShooterBox.setShooterSpeed(1),
+      m_ShooterBox).
+    withTimeout(2.5).
+    andThen(
+      new ParallelCommandGroup(
+        new RunCommand(() -> m_Indexer.setShooterSpeed(.25), m_Indexer),
+        new RunCommand(() -> m_ShooterBox.setShooterSpeed(1), m_ShooterBox)
+      ).
+      withTimeout(3)
+    ).andThen(
+      shootThenTaxiTrajectoryCommand()
+    );
   }
 
   public Command shootThenTaxiTrajectoryCommand() {
     PathPlannerPath path = PathPlannerPath.fromPathFile("shootThenTaxi.path");
 
     PathConstraints constraints = new PathConstraints(
-      1.75,
-      .45,
+      .85,
+      .05,
       2.35,
       .55);
     Command pathFindCommand = AutoBuilder.pathfindThenFollowPath(path, constraints);
@@ -187,6 +191,11 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return shootThenBackUp();
+    return new RunCommand(
+      () -> m_robotDrive.drive
+      (.25, 0, 0, false, false),
+      m_robotDrive
+    )
+    .withTimeout(1.5);
   }          
 }

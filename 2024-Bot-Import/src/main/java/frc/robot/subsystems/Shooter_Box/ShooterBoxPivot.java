@@ -50,9 +50,9 @@ public class ShooterBoxPivot extends ProfiledPIDSubsystem {
 
     m_WriAngEncoder = m_WristAngle.getEncoder();
     m_WriAngEncoder.setPosition(0);
-    m_WriAngEncoder.setPositionConversionFactor(MechConstants.kWristAngleConversionFactor);
+    m_WriAngEncoder.setPositionConversionFactor(MechConstants.kWristAngleConversionFactor * -1);
     m_WristAngle.setIdleMode(IdleMode.kCoast);
-    setGoal(0);
+    setGoal(MechConstants.kWristAngleOffest);
   }
 
   public enum ShootPivState {

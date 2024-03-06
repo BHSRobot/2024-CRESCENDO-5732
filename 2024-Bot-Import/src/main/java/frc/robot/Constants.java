@@ -43,8 +43,8 @@ public final class Constants {
     public static final double kDElevLen = 0;
 
     public static final double kElevLenConversionFactor = (2 * Math.PI / 20) / 12;
-    public static final double kElevAngleConversionFactor = -1 * (180 / Math.PI) * (2 * Math.PI) / 108;  // gear ratio 108
-    public static final double kWristAngleConversionFactor = -1 * (180 / Math.PI) * ((2 * Math.PI) / 40); //gear ratio 40
+    public static final double kElevAngleConversionFactor = (2 * Math.PI) / 108;  // gear ratio 108
+    public static final double kWristAngleConversionFactor = (2 * Math.PI) / 40; //gear ratio 40
     public static final double kWristAngleOffest = 0.05;
 
     public static final double kElevAngleMaxVelocity = 2.25;

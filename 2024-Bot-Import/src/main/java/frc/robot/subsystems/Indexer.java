@@ -68,4 +68,8 @@ public class Indexer extends SubsystemBase {
     this.state = state;
   }
 
+  public void setShooterSpeed(double output) {
+    indexNEO.set(output);
+  }
+
 }
