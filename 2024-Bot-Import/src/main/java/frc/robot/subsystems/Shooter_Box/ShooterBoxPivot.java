@@ -15,12 +15,13 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
-import frc.robot.Constants.MechConstants;
 import frc.robot.subsystems.Elevator.ElevatorExtend;
 import frc.robot.subsystems.Elevator.ElevatorPivot;
 import frc.robot.subsystems.Elevator.ElevatorExtend.ElevExtState;
+import frc.utils.Constants.MechConstants;
 
 public class ShooterBoxPivot extends ProfiledPIDSubsystem {
   private CANSparkMax m_WristAngle;
@@ -40,7 +41,7 @@ public class ShooterBoxPivot extends ProfiledPIDSubsystem {
             MechConstants.kIElevAngle,
             MechConstants.kDElevAngle,
             // The motion profile constraints
-            new TrapezoidProfile.Constraints(.3, .05)));
+            new TrapezoidProfile.Constraints(180, 180)));
     m_WristAngle = new CANSparkMax(MechConstants.kWristPivID, MotorType.kBrushless);
     m_feedforward = new ArmFeedforward(
       0,
@@ -49,8 +50,7 @@ public class ShooterBoxPivot extends ProfiledPIDSubsystem {
       MechConstants.kAWrist);
 
     m_WriAngEncoder = m_WristAngle.getEncoder();
-    m_WriAngEncoder.setPosition(0);
-    m_WriAngEncoder.setPositionConversionFactor(MechConstants.kWristAngleConversionFactor * -1);
+    m_WriAngEncoder.setPositionConversionFactor(MechConstants.kWristAngleConversionFactor);
     m_WristAngle.setIdleMode(IdleMode.kCoast);
     setGoal(MechConstants.kWristAngleOffest);
   }
@@ -65,7 +65,11 @@ public class ShooterBoxPivot extends ProfiledPIDSubsystem {
     // This method will be called once per scheduler run
     super.periodic();
     Logger.recordOutput("Wrist Pivot Angle", getMeasurement());
+    Logger.recordOutput("Wrist Pivot Setpoint", 90);
     SmartDashboard.putNumber("Wrist Pivot Angle", getMeasurement());
+
+    if (DriverStation.isDisabled())
+      setGoal(0.15);
   }
 
   @Override
@@ -74,10 +78,7 @@ public class ShooterBoxPivot extends ProfiledPIDSubsystem {
     // Calculate the feedforward from the sepoint
     double feedforward = m_feedforward.calculate(setpoint.position, setpoint.velocity);
     // Add the feedforward to the PID output to get the motor output
-    if (getMeasurement() >= 1)
-      m_WristAngle.setVoltage(0);
-    else 
-      m_WristAngle.setVoltage(output + feedforward);
+    m_WristAngle.setVoltage(output);
   }
 
   @Override

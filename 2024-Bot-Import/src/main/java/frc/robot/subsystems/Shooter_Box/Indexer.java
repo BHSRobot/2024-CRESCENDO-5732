@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.subsystems.Shooter_Box;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -10,8 +10,8 @@ import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
-import frc.robot.Constants.MechConstants;
+import frc.utils.Constants;
+import frc.utils.Constants.MechConstants;
 
 public class Indexer extends SubsystemBase {
   private CANSparkMax indexNEO;
@@ -68,7 +68,7 @@ public class Indexer extends SubsystemBase {
     this.state = state;
   }
 
-  public void setShooterSpeed(double output) {
+  public void setIndexerSpeed(double output) {
     indexNEO.set(output);
   }
 

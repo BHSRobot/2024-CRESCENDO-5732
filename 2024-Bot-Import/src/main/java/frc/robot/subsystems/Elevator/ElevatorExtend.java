@@ -18,9 +18,9 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
-import frc.robot.Constants.MechConstants;
 import frc.robot.subsystems.Shooter_Box.ShooterBoxPivot;
 import frc.robot.subsystems.Shooter_Box.ShooterBoxPivot.ShootPivState;
+import frc.utils.Constants.MechConstants;
 
 public class ElevatorExtend extends ProfiledPIDSubsystem {
   private CANSparkMax elevExtendNEO;

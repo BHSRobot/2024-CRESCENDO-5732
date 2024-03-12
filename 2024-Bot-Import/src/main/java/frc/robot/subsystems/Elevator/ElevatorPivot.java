@@ -3,10 +3,10 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.subsystems.Elevator;
-import frc.robot.Constants;
-import frc.robot.Constants.MechConstants;
 import frc.robot.subsystems.Shooter_Box.ShooterBoxPivot;
 import frc.robot.subsystems.Shooter_Box.ShooterBoxPivot.ShootPivState;
+import frc.utils.Constants;
+import frc.utils.Constants.MechConstants;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;

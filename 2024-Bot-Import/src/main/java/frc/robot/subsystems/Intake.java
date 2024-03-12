@@ -10,8 +10,8 @@ import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
-import frc.robot.Constants.MechConstants;
+import frc.utils.Constants;
+import frc.utils.Constants.MechConstants;
 
 public class Intake extends SubsystemBase {
   private CANSparkMax neo1;

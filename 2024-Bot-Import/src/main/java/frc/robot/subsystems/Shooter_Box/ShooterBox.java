@@ -8,14 +8,16 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
-import frc.robot.Constants.MechConstants;
+import frc.utils.Constants;
+import frc.utils.Constants.MechConstants;
 
 public class ShooterBox extends SubsystemBase {
-  private CANSparkMax ShooterNeo1;
-  private CANSparkMax ShooterNeo2;
+  private static CANSparkMax ShooterNeo1;
+  private static CANSparkMax ShooterNeo2;
 
   private ShooterState state = ShooterState.DISABLED;
 
