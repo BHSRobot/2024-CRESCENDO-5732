@@ -135,14 +135,8 @@ public class DriveSubsystem extends SubsystemBase {
     Logger.recordOutput("Pose2d", m_odometry.getPoseMeters());
     Logger.recordOutput("SwerveModuleStates", getModuleStates());
     Logger.recordOutput("Speed", getRobotRelativeSpeeds());
+    Logger.recordOutput("Robot Heading", getHeading());
   }
-
-/*new SwerveModulePosition[] {
-            m_frontLeft.getPosition(),
-            m_frontRight.getPosition(),
-            m_rearLeft.getPosition(),
-            m_rearRight.getPosition()
- */
 
   /**
    * Returns the currently-estimated pose of the robot.

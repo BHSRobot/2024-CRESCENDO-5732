@@ -74,10 +74,7 @@ public class ElevatorPivot extends ProfiledPIDSubsystem {
     // Calculate the feedforward from the sepoint
     double feedforward = m_feedforward.calculate(setpoint.position, setpoint.velocity);
     // Add the feedforward to the PID output to get the motor output
-    if (ShooterBoxPivot.getState() == ShootPivState.ENABLED)
-      m_ElevAngle.setVoltage(0);
-    else 
-      m_ElevAngle.setVoltage(output + feedforward);
+    m_ElevAngle.setVoltage(output + feedforward);
   }
 
   @Override

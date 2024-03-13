@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import frc.robot.subsystems.Elevator.ElevatorExtend;
 import frc.robot.subsystems.Elevator.ElevatorPivot;
-import frc.robot.subsystems.Elevator.ElevatorExtend.ElevExtState;
 import frc.utils.Constants.MechConstants;
 
 public class ShooterBoxPivot extends ProfiledPIDSubsystem {
@@ -29,8 +28,6 @@ public class ShooterBoxPivot extends ProfiledPIDSubsystem {
   private RelativeEncoder m_WriAngEncoder;
 
   private ArmFeedforward m_feedforward;
-
-  private static ShootPivState ShootPivot;
 
   /** Creates a new ShooterBoxPivot. */
   public ShooterBoxPivot() {
@@ -87,11 +84,4 @@ public class ShooterBoxPivot extends ProfiledPIDSubsystem {
     return m_WriAngEncoder.getPosition();
   }
 
-  public static ShootPivState getState() {
-    return ShootPivot;
-  }
-
-  public void setState(ShootPivState state) {
-    ShootPivot = state;
-  }
 }

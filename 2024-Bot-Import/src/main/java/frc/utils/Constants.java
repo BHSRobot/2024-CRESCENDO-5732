@@ -45,12 +45,9 @@ public final class Constants {
     public static final double kElevLenConversionFactor = (2 * Math.PI / 20) / 12;
     public static final double kElevAngleConversionFactor = 360 / 108;  // gear ratio 108
     public static final double kWristAngleConversionFactor = 360 / 40; //gear ratio 40
-    public static final double kWristAngleOffest = 1.5;
 
     public static final double kElevAngleMaxVelocity = 2.25;
     public static final double kElevAngleMaxAcceleration = .25;
-
-    public static final double kArmOffsetRads = 0.5;
 
     //Elevator Pivot Feedforward
     public static final double kGElevAng = 1.35;
@@ -78,6 +75,10 @@ public final class Constants {
     public static final int kIntakeID = 17;
 
     public static final int kIndexerID = 18;
+
+    //Offsets
+    public static final double kWristAngleOffest = 1.5;
+    public static final double kElevatorOffset = 0.05;
   }
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of

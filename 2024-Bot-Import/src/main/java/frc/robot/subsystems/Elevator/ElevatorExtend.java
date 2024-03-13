@@ -27,7 +27,6 @@ public class ElevatorExtend extends ProfiledPIDSubsystem {
   private RelativeEncoder m_LenEncoder;
   private ElevatorFeedforward m_feedforward;
 
-  public static ElevExtState ElevState;
   /** Creates a new ElevatorExtend. */
   public ElevatorExtend() {
     super(
@@ -53,11 +52,6 @@ public class ElevatorExtend extends ProfiledPIDSubsystem {
     setGoal(0);
   }
 
-  public enum ElevExtState {
-    ENABLED,
-    DISABLED
-  }
-
   @Override
   public void periodic() {
     super.periodic();
@@ -71,10 +65,10 @@ public class ElevatorExtend extends ProfiledPIDSubsystem {
     // Calculate the feedforward from the sepoint
     double feedforward = m_feedforward.calculate(setpoint.position, setpoint.velocity);
     // Add the feedforward to the PID output to get the motor output
-    if (getMeasurement() >= 1.25 || ShooterBoxPivot.getState() == ShootPivState.ENABLED)
-      elevExtendNEO.setVoltage(0);
+    if (getMeasurement() >= 1.25)
+      elevExtendNEO.set(0);
     else
-      elevExtendNEO.setVoltage(output + feedforward);
+      elevExtendNEO.set(output + feedforward);
   }
 
   //Manual For testing
@@ -85,13 +79,5 @@ public class ElevatorExtend extends ProfiledPIDSubsystem {
   @Override
   public double getMeasurement() {
     return m_LenEncoder.getPosition();
-  }
-
-  public static ElevExtState getState() {
-    return ElevState;
-  }
-
-  public void setState(ElevExtState state) {
-    ElevState = state;
   }
 }

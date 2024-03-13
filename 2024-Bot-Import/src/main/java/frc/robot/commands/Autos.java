@@ -10,47 +10,51 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.Shooter_Box.Indexer;
 import frc.robot.subsystems.Shooter_Box.ShooterBox;
 
 /** Add your docs here. */
 public class Autos {
-    private final LoggedDashboardChooser<Command> autoChooser;
+    public final LoggedDashboardChooser<Command> autoChooser;
  
     public Autos() { 
         autoChooser = new LoggedDashboardChooser<>("AutoChooser", AutoBuilder.buildAutoChooser());
+        SmartDashboard.putData("Auto Mode", AutoBuilder.buildAutoChooser());
+    }
+    //Speaker Score then Taxi Auto
+    public Command shootThenTaxiTrajectoryCommand() {
+        PathPlannerPath path = PathPlannerPath.fromPathFile("shootThenTaxi.path"); //First we initialize our path from a file located within our project
+
+        PathConstraints constraints = new PathConstraints( //Then we declare the constraints of followng said path
+        .85,
+        .05,
+        2.35,
+        .55);
+        Command pathFindCommand = AutoBuilder.pathfindThenFollowPath(path, constraints); //Afterwards, we pass the path into AutoBuilder to build the auto, and return it as a new command
+
+        return pathFindCommand;
     }
 
-    public Command shootThenBackUp(ShooterBox shootBox, Indexer index) {
-        return new RunCommand(
-            () -> shootBox.setShooterSpeed(1),
-            shootBox).
+    public Command shootThenBackUp() {
+        Command shootBackUp = new RunCommand(
+            () -> RobotContainer.m_ShooterBox.setShooterSpeed(1),
+            RobotContainer.m_ShooterBox).
         withTimeout(2.5).
         andThen(
             new ParallelCommandGroup(
-            new RunCommand(() -> shootBox.setShooterSpeed(-1), shootBox),
-            new RunCommand(() -> index.setIndexerSpeed(.25), index)
+            new RunCommand(() -> RobotContainer.m_ShooterBox.setShooterSpeed(-1), RobotContainer.m_ShooterBox),
+            new RunCommand(() -> RobotContainer.m_Indexer.setIndexerSpeed(.25), RobotContainer.m_Indexer)
             ).
             withTimeout(3)
         ).andThen(
             shootThenTaxiTrajectoryCommand()
         );
+        autoChooser.addOption("Score Speaker then Taxi", shootBackUp);
+        return shootBackUp;
     }
-
-    public Command shootThenTaxiTrajectoryCommand() {
-        PathPlannerPath path = PathPlannerPath.fromPathFile("shootThenTaxi.path");
-
-        PathConstraints constraints = new PathConstraints(
-        .85,
-        .05,
-        2.35,
-        .55);
-        Command pathFindCommand = AutoBuilder.pathfindThenFollowPath(path, constraints);
-
-        return pathFindCommand;
-    }
-
 }
