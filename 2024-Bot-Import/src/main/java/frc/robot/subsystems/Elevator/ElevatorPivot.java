@@ -78,7 +78,7 @@ public class ElevatorPivot extends ProfiledPIDSubsystem {
   }
 
   @Override
-  protected double getMeasurement() {
+  public double getMeasurement() {
     // TODO Auto-generated method stub
     return m_EncAngEncoder.getPosition();
   }

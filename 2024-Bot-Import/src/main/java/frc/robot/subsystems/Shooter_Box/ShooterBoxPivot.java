@@ -15,6 +15,8 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
@@ -28,6 +30,8 @@ public class ShooterBoxPivot extends ProfiledPIDSubsystem {
   private RelativeEncoder m_WriAngEncoder;
 
   private ArmFeedforward m_feedforward;
+
+  private NetworkTable table;
 
   /** Creates a new ShooterBoxPivot. */
   public ShooterBoxPivot() {
@@ -50,6 +54,8 @@ public class ShooterBoxPivot extends ProfiledPIDSubsystem {
     m_WriAngEncoder.setPositionConversionFactor(MechConstants.kWristAngleConversionFactor);
     m_WristAngle.setIdleMode(IdleMode.kCoast);
     setGoal(MechConstants.kWristAngleOffest);
+
+    table = NetworkTableInstance.getDefault().getTable("limelight");
   }
 
   public enum ShootPivState {
@@ -64,6 +70,7 @@ public class ShooterBoxPivot extends ProfiledPIDSubsystem {
     Logger.recordOutput("Wrist Pivot Angle", getMeasurement());
     Logger.recordOutput("Wrist Pivot Setpoint", 90);
     SmartDashboard.putNumber("Wrist Pivot Angle", getMeasurement());
+    Logger.recordOutput("Limelight TY", table.getEntry("ty").getDouble(0.0));
 
     if (DriverStation.isDisabled())
       setGoal(0.15);

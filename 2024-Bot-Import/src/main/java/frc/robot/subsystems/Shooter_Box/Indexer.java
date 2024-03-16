@@ -1,7 +1,7 @@
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
-
+// hey john, for like a full ass year I spelt your name as "Jhon", to the point thats the name of contact I have you as in my phone.
 package frc.robot.subsystems.Shooter_Box;
 
 import com.revrobotics.CANSparkBase.IdleMode;

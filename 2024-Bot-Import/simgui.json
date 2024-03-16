@@ -1,21 +1,52 @@
 {
-  "HALProvider": {
-    "PowerDistributions": {
-      "window": {
-        "visible": true
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo"
+    },
+    "windows": {
+      "/FMSInfo": {
+        "window": {
+          "visible": true
+        }
       }
     }
   },
-  "NTProvider": {
-    "types": {
-      "/FMSInfo": "FMSInfo",
-      "/SmartDashboard/Auto Mode": "String Chooser",
-      "/SmartDashboard/AutoChooser": "String Chooser",
-      "/SmartDashboard/Example Auto": "Command"
+  "NetworkTables": {
+    "transitory": {
+      "AdvantageKit": {
+        "open": true
+      },
+      "Shuffleboard": {
+        "open": true
+      },
+      "SmartDashboard": {
+        "DB": {
+          "open": true
+        },
+        "open": true
+      }
     }
   },
   "NetworkTables Info": {
-    "Connections": {
+    "Clients": {
+      "open": true
+    },
+    "NT3@127.0.0.1:62697": {
+      "Publishers": {
+        "open": true
+      },
+      "Subscribers": {
+        "open": true
+      },
+      "open": true
+    },
+    "Server": {
+      "Publishers": {
+        "open": true
+      },
+      "Subscribers": {
+        "open": true
+      },
       "open": true
     },
     "visible": true

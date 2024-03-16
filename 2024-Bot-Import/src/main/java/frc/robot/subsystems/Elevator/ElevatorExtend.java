@@ -32,9 +32,9 @@ public class ElevatorExtend extends ProfiledPIDSubsystem {
     super(
         // The ProfiledPIDController used by the subsystem
         new ProfiledPIDController(
-            0.04,
+            0.42,
             0,
-            .03,
+            0,
             // The motion profile constraints
             new TrapezoidProfile.Constraints(1.75, .55)));
     elevExtendNEO = new CANSparkMax(MechConstants.kElevExtID, MotorType.kBrushless);
