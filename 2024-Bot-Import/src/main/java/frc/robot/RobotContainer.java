@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.commands.AimWithLimelight;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ScoringPositions;
 import frc.robot.subsystems.Elevator.ElevatorExtend;
@@ -36,6 +37,7 @@ import frc.utils.Constants.DriveConstants;
 import frc.utils.Constants.OIConstants;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -113,7 +115,6 @@ public class RobotContainer {
       .alongWith(new ScoringPositions().scoreAmpPos(m_ElevatorExtend, m_ShooterBoxPivot)
       .andThen(new RunCommand(() -> m_Indexer.setIndexerSpeed(.75))))
     );
-    
   }
 
   /**
@@ -155,6 +156,21 @@ public class RobotContainer {
     m_OpController.rightTrigger().
       onTrue(m_ShooterBox.enabledCommand())
       .onFalse(m_ShooterBox.disabledCommand());    
+    
+    //Driver Aligns to AprilTag
+    m_driverController.a().
+      onTrue(new ConditionalCommand(
+        new RunCommand(() -> m_robotDrive.drive(0, 0, new LimeHelp().aimRobotRot(), false, false), m_robotDrive),
+        new RunCommand(() -> m_robotDrive.drive(0, 0, 0, false, false), m_robotDrive),
+        () ->  new LimeHelp().getTX() <= 0
+        )
+      );
+
+    //Drive Aligns to AprilTag (the dumb way)
+    /*
+    m_driverController.a().
+      onTrue(new AimWithLimelight(m_robotDrive)); 
+     */
   }
 
   public void setupDriverTab() {

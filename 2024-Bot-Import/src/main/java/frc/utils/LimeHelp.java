@@ -6,6 +6,7 @@ package frc.utils;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import frc.utils.Constants.DriveConstants;
 
 /** Add your docs here. */
 public class LimeHelp {
@@ -21,5 +22,10 @@ public class LimeHelp {
     }
     public double getTA() {
         return table.getEntry("ta").getDouble(0.0);
+    }
+
+    public double aimRobotRot() {
+        double kP = 0.35;
+        return ((getTX() * kP) * DriveConstants.kMaxAngularSpeed) * -1;
     }
 }
