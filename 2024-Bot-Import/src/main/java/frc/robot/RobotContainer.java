@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -14,6 +15,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -48,6 +50,7 @@ import java.util.function.Supplier;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -57,7 +60,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
  */
 public class RobotContainer {
   // The robot's subsystems
-  private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  public final static DriveSubsystem m_robotDrive = new DriveSubsystem();
   //Elevator stuff
   private final ElevatorExtend m_ElevatorExtend = new ElevatorExtend();
   private final ElevatorPivot m_ElevatorPivot = new ElevatorPivot();
@@ -68,7 +71,7 @@ public class RobotContainer {
   public final static ShooterBox m_ShooterBox = new ShooterBox();
   public final static ShooterBoxPivot m_ShooterBoxPivot = new ShooterBoxPivot();
 
-  private final Autos auto = new Autos();
+  private final LoggedDashboardChooser<Command> autoChooser;
 
 
   // The driver's controller
@@ -96,8 +99,21 @@ public class RobotContainer {
                 -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
                 -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
                 -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
-                true, true),
+                true, false),
             m_robotDrive));
+
+    configureNamedCommands();
+
+    autoChooser = new LoggedDashboardChooser<>("AutoChooser", AutoBuilder.buildAutoChooser());
+  }
+
+  public void configureNamedCommands() {
+    NamedCommands.registerCommand("Auto Amp-Score",
+      new RunCommand(() -> m_ShooterBox.setShooterSpeed(-1), m_ShooterBox)
+      .alongWith(new ScoringPositions().scoreAmpPos(m_ElevatorExtend, m_ShooterBoxPivot)
+      .andThen(new RunCommand(() -> m_Indexer.setIndexerSpeed(.75))))
+    );
+    
   }
 
   /**
@@ -143,8 +159,20 @@ public class RobotContainer {
 
   public void setupDriverTab() {
     ShuffleboardTab driverTab = Shuffleboard.getTab("Driver");
-
-    driverTab.addDouble("Time Remaining", () -> { return (int) Timer.getMatchTime();});
+    driverTab.addDouble("Time Remaining", () -> {
+        return Timer.getMatchTime();
+      }
+    );
+    driverTab.addString("Event Name",  () -> { 
+        return DriverStation.getEventName();
+      }
+    );
+    driverTab.addString("Alliance Color",  () -> { 
+        return DriverStation.getAlliance().toString();
+      }
+    );
+    
+    CameraServer.startAutomaticCapture();
   }
 
   /**
@@ -153,45 +181,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    m_robotDrive.resetOdometry(m_robotDrive.getPose());
-    // return auto.autoChooser.get();
-     // 1. Create trajectory settings
-      TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
-              AutoConstants.kMaxSpeedMetersPerSecond,
-              AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-                      .setKinematics(DriveConstants.kDriveKinematics);
-
-      // 2. Generate trajectory
-      Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
-              new Pose2d(0, 0, new Rotation2d(0)),
-              List.of(
-                      new Translation2d(1, 0),
-                      new Translation2d(1, -1)),
-              new Pose2d(2, -1, Rotation2d.fromDegrees(180)),
-              trajectoryConfig);
-
-      // 3. Define PID controllers for tracking trajectory
-      PIDController xController = new PIDController(AutoConstants.kPXController, 0, 0);
-      PIDController yController = new PIDController(AutoConstants.kPYController, 0, 0);
-      ProfiledPIDController thetaController = new ProfiledPIDController(
-              AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
-      thetaController.enableContinuousInput(-Math.PI, Math.PI);
-
-      // 4. Construct command to follow trajectory
-      SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-              trajectory,
-              m_robotDrive::getPose,
-              DriveConstants.kDriveKinematics,
-              xController,
-              yController,
-              thetaController,
-              m_robotDrive::setModuleStates,
-              m_robotDrive);
-
-      // 5. Add some init and wrap-up, and return everything
-      return new SequentialCommandGroup(
-              new InstantCommand(() -> m_robotDrive.resetOdometry(trajectory.getInitialPose())),
-              swerveControllerCommand,
-              new InstantCommand(() -> m_robotDrive.stopModules()));
+    return autoChooser.get();
   }          
 }

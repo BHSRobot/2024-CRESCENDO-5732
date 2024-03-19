@@ -32,12 +32,14 @@ import org.littletonrobotics.junction.LoggedRobot;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.google.flatbuffers.FlexBuffers.Key;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
 import frc.utils.SwerveUtils;
 import frc.utils.Constants.DriveConstants;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import org.littletonrobotics.junction.LogFileUtil;
@@ -103,7 +105,7 @@ public class DriveSubsystem extends SubsystemBase {
             this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
             this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
             new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+                    new PIDConstants(1.0, 0.0, 0.0), // Translation PID constants
                     new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
                     2.5, // Max module speed, in m/s
                     0.45, // Drive base radius in meters. Distance from robot center to furthest module.
@@ -124,6 +126,10 @@ public class DriveSubsystem extends SubsystemBase {
     );
 
     table = NetworkTableInstance.getDefault().getTable("limelight");
+  }
+
+  public Command getAutoCommand(String autoName) {
+    return new PathPlannerAuto(autoName);
   }
 
   @Override

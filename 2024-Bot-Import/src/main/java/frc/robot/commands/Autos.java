@@ -35,9 +35,8 @@ public class Autos {
         .05,
         2.35,
         .55);
-        Command pathFindCommand = AutoBuilder.pathfindThenFollowPath(path, constraints); //Afterwards, we pass the path into AutoBuilder to build the auto, and return it as a new command
-
-        return pathFindCommand;
+        
+        return AutoBuilder.pathfindThenFollowPath(path, constraints);
     }
 
     public Command shootThenBackUp() {

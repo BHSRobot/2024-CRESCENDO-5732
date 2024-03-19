@@ -71,7 +71,6 @@ public class ElevatorExtend extends ProfiledPIDSubsystem {
       elevExtendNEO.set(output + feedforward);
   }
 
-  //Manual For testing
   public void setManualSpeed(double speed) {
     elevExtendNEO.set(speed);
   }

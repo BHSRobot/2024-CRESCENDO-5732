@@ -8,8 +8,9 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.proto.Trajectory;
-import edu.wpi.first.math.trajectory.*;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
@@ -18,6 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.utils.Constants;
+import frc.utils.Constants.DriveConstants;
 
 import java.util.List;
 
@@ -71,27 +73,30 @@ public class Robot extends LoggedRobot {
          Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
          break;
      }
-
-  if (isReal()) {
-    Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
-    Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
-    new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
-  } 
-  else {
-    setUseTiming(false); // Run as fast as possible
-    String logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
-    Logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
-    Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
-  }
   
-  Logger.disableDeterministicTimestamps(); // See "Deterministic Timestamps" in the "Understanding Data Flow" page
-  Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
+    Logger.disableDeterministicTimestamps(); // See "Deterministic Timestamps" in the "Understanding Data Flow" page
+    Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-    CameraServer.startAutomaticCapture();
-    
-    SmartDashboard.putNumber("NUMBEr", 5000);
+    Field2d field = new Field2d();
+    SmartDashboard.putData("Field", field);
+
+    TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
+              /*AutoConstants.kMaxSpeedMetersPerSecond*/ 1.5,
+              /*AutoConstants.kMaxAccelerationMetersPerSecondSquared*/ 1.5)
+                      .setKinematics(DriveConstants.kDriveKinematics);
+
+      // 2. Generate trajectory
+      Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
+              new Pose2d(0, 0, new Rotation2d(0)),
+              List.of(
+                      new Translation2d(1, 0),
+                      new Translation2d(1, 0)),
+              new Pose2d(3, 0, Rotation2d.fromDegrees(0)),
+              trajectoryConfig);
+
+    field.getObject("traj").setTrajectory(trajectory);
   }
 
   /**
