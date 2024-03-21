@@ -19,7 +19,6 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import frc.robot.subsystems.Shooter_Box.ShooterBoxPivot;
-import frc.robot.subsystems.Shooter_Box.ShooterBoxPivot.ShootPivState;
 import frc.utils.Constants.MechConstants;
 
 public class ElevatorExtend extends ProfiledPIDSubsystem {
@@ -32,7 +31,7 @@ public class ElevatorExtend extends ProfiledPIDSubsystem {
     super(
         // The ProfiledPIDController used by the subsystem
         new ProfiledPIDController(
-            0.42,
+            0.55,
             0,
             0,
             // The motion profile constraints
@@ -68,7 +67,7 @@ public class ElevatorExtend extends ProfiledPIDSubsystem {
     if (getMeasurement() >= 1.25)
       elevExtendNEO.set(0);
     else
-      elevExtendNEO.set(output + feedforward);
+      elevExtendNEO.set(output);
   }
 
   public void setManualSpeed(double speed) {

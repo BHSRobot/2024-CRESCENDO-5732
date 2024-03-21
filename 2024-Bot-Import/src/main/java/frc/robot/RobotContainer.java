@@ -127,21 +127,25 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
-  //X-Stance Defence Position
+    //X-Stance Defence Position
     m_driverController.y().
       whileTrue(new InstantCommand(() -> m_robotDrive.setX(), m_robotDrive));
+
     //Amp Score
     m_OpController.povRight().
       onTrue(new ScoringPositions().scoreAmpPos(m_ElevatorExtend, m_ShooterBoxPivot));
-    //Default Position
+    //Zero Position
     m_OpController.povDown().
-      onTrue(new ScoringPositions().zero(m_ElevatorExtend, m_ShooterBoxPivot));
-    //Limelight Auto-Aim
-    m_OpController.x().
-      onTrue(Commands.runOnce(
-        () -> m_ShooterBoxPivot.setGoal(new LimeHelp().getTY()),
-        m_ShooterBoxPivot)
-      );
+      onTrue(new ScoringPositions().zero(m_ElevatorExtend, m_ShooterBoxPivot, m_ElevatorPivot));
+    //Default Speaker Shoot
+    m_OpController.povUp().
+      onTrue(new ScoringPositions().defaultSpeaker(m_ElevatorPivot));
+    //Climb Up
+    m_OpController.y()
+      .onTrue(new ScoringPositions().climb(m_ElevatorExtend, m_ShooterBoxPivot, m_ElevatorPivot));
+    //Climb Zero
+    m_OpController.x()
+      .onTrue(new ScoringPositions().climbZero(m_ElevatorExtend, m_ShooterBoxPivot, m_ElevatorPivot));
 
     //Driver Intake
     m_driverController.rightTrigger().
@@ -158,19 +162,26 @@ public class RobotContainer {
       .onFalse(m_ShooterBox.disabledCommand());    
     
     //Driver Aligns to AprilTag
-    m_driverController.a().
-      onTrue(new ConditionalCommand(
-        new RunCommand(() -> m_robotDrive.drive(0, 0, new LimeHelp().aimRobotRot(), false, false), m_robotDrive),
-        new RunCommand(() -> m_robotDrive.drive(0, 0, 0, false, false), m_robotDrive),
-        () ->  new LimeHelp().getTX() <= 0
-        )
-      );
+    // m_driverController.a().
+    //   onTrue(new ConditionalCommand(
+    //     new RunCommand(() -> m_robotDrive.drive(0, 0, new LimeHelp().aimRobotRot(), false, false), m_robotDrive),
+    //     new RunCommand(() -> m_robotDrive.drive(0, 0, 0, false, false), m_robotDrive),
+    //     () ->  new LimeHelp().getTX() <= 0
+    //     )
+    //   );
 
     //Drive Aligns to AprilTag (the dumb way)
     /*
     m_driverController.a().
       onTrue(new AimWithLimelight(m_robotDrive)); 
      */
+
+    //Limelight Auto-Aim
+    // m_OpController.x().
+    //   onTrue(Commands.runOnce(
+    //     () -> m_ShooterBoxPivot.setGoal(new LimeHelp().getTY()),
+    //     m_ShooterBoxPivot)
+    //   );
   }
 
   public void setupDriverTab() {

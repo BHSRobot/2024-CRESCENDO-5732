@@ -31,8 +31,8 @@ public class Autos {
         PathPlannerPath path = PathPlannerPath.fromPathFile("shootThenTaxi.path"); //First we initialize our path from a file located within our project
 
         PathConstraints constraints = new PathConstraints( //Then we declare the constraints of followng said path
+        1.75,
         .85,
-        .05,
         2.35,
         .55);
         

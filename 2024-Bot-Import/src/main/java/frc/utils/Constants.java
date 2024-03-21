@@ -33,7 +33,7 @@ public final class Constants {
   public static final class MechConstants {
 
     //Elevator/Wrist Pivot PID
-    public static final double kPElevAngle = 0.35;
+    public static final double kPElevAngle = 0.15;
     public static final double kIElevAngle = 0.0;
     public static final double kDElevAngle = 0;
 
@@ -46,8 +46,8 @@ public final class Constants {
     public static final double kElevAngleConversionFactor = 360 / 108;  // gear ratio 108
     public static final double kWristAngleConversionFactor = 360 / 40; //gear ratio 40
 
-    public static final double kElevAngleMaxVelocity = 2.25;
-    public static final double kElevAngleMaxAcceleration = .25;
+    public static final double kElevAngleMaxVelocity = 6;
+    public static final double kElevAngleMaxAcceleration = 3.5;
 
     //Elevator Pivot Feedforward
     public static final double kGElevAng = 1.35;
@@ -83,7 +83,7 @@ public final class Constants {
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
-    public static final double kMaxSpeedMetersPerSecond = 1.5; // Max speed = 5.0
+    public static final double kMaxSpeedMetersPerSecond = 3.5; // Max speed = 5.0
     public static final double kMaxAngularSpeed = 2.25 * Math.PI; // radians per second  max is 4 so far?
 
     public static final double kDirectionSlewRate = 2.3; // radians per second

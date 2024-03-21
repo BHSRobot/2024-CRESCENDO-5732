@@ -143,12 +143,12 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearLeft.getPosition(),
             m_rearRight.getPosition()
         });
-    Logger.recordOutput("Gyro Angle", m_gyro.getAngle());
-    Logger.recordOutput("Pose2d", m_odometry.getPoseMeters());
-    Logger.recordOutput("SwerveModuleStates", getModuleStates());
-    Logger.recordOutput("Speed", getRobotRelativeSpeeds());
-    Logger.recordOutput("Robot Heading", getHeading());
-    Logger.recordOutput("Limelight TY", table.getEntry("ty").getDouble(0.0));
+    // Logger.recordOutput("Gyro Angle", m_gyro.getAngle());
+    // Logger.recordOutput("Pose2d", m_odometry.getPoseMeters());
+    // Logger.recordOutput("SwerveModuleStates", getModuleStates());
+    // Logger.recordOutput("Speed", getRobotRelativeSpeeds());
+    // Logger.recordOutput("Robot Heading", getHeading());
+    // Logger.recordOutput("Limelight TY", table.getEntry("ty").getDouble(0.0));
   }
 
   /**

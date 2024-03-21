@@ -33,6 +33,8 @@ public class ShooterBoxPivot extends ProfiledPIDSubsystem {
 
   private NetworkTable table;
 
+  private double staticGoal;
+
   /** Creates a new ShooterBoxPivot. */
   public ShooterBoxPivot() {
     super(
@@ -42,7 +44,7 @@ public class ShooterBoxPivot extends ProfiledPIDSubsystem {
             MechConstants.kIElevAngle,
             MechConstants.kDElevAngle,
             // The motion profile constraints
-            new TrapezoidProfile.Constraints(180, 180)));
+            new TrapezoidProfile.Constraints(180, 90)));
     m_WristAngle = new CANSparkMax(MechConstants.kWristPivID, MotorType.kBrushless);
     m_feedforward = new ArmFeedforward(
       0,
@@ -58,11 +60,6 @@ public class ShooterBoxPivot extends ProfiledPIDSubsystem {
     table = NetworkTableInstance.getDefault().getTable("limelight");
   }
 
-  public enum ShootPivState {
-    ENABLED,
-    DISABLED
-  }
-
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -72,8 +69,6 @@ public class ShooterBoxPivot extends ProfiledPIDSubsystem {
     SmartDashboard.putNumber("Wrist Pivot Angle", getMeasurement());
     Logger.recordOutput("Limelight TY", table.getEntry("ty").getDouble(0.0));
 
-    if (DriverStation.isDisabled())
-      setGoal(0.15);
   }
 
   @Override
@@ -91,4 +86,16 @@ public class ShooterBoxPivot extends ProfiledPIDSubsystem {
     return m_WriAngEncoder.getPosition();
   }
 
+  public void setManualSpeed(double speed) {
+    // if (getMeasurement() <= 0.1)
+    //   m_WristAngle.set(0);
+    // else if (getMeasurement() >= 90)
+    //   m_WristAngle.set(0);
+    // else
+      m_WristAngle.set(speed);
+  }
+
+  public void setPermGoal(double goal) {
+    staticGoal = goal;
+  }
 }

@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Shooter_Box.ShooterBoxPivot;
-import frc.robot.subsystems.Shooter_Box.ShooterBoxPivot.ShootPivState;
 import frc.utils.Constants;
 import frc.utils.Constants.MechConstants;
 
@@ -22,6 +21,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -33,13 +33,15 @@ public class ElevatorPivot extends ProfiledPIDSubsystem {
 
   private ArmFeedforward m_feedforward;
 
+  private static double staticGoal;
+
   /** Creates a new Elevator. */
   public ElevatorPivot() {
     super(
       new ProfiledPIDController(
         MechConstants.kPElevAngle,
         MechConstants.kIElevAngle,
-        MechConstants.kIElevAngle,
+        MechConstants.kDElevAngle,
           new TrapezoidProfile.Constraints
             (MechConstants.kElevAngleMaxVelocity, 
             MechConstants.kElevAngleMaxAcceleration)
@@ -52,7 +54,6 @@ public class ElevatorPivot extends ProfiledPIDSubsystem {
       MechConstants.kVElevAng,
       MechConstants.kAElevAng);
 
-    //Absolute
     m_EncAngEncoder = m_ElevAngle.getEncoder();
     m_EncAngEncoder.setPositionConversionFactor(MechConstants.kElevAngleConversionFactor);
     m_EncAngEncoder.setPosition(0);
@@ -66,20 +67,23 @@ public class ElevatorPivot extends ProfiledPIDSubsystem {
     super.periodic();
     Logger.recordOutput("Elevator Pivot Angle", getMeasurement());
     SmartDashboard.putNumber("Elevator Pivot Angle", getMeasurement());
+
+    if (DriverStation.isDisabled())
+      setGoal(staticGoal);
   }
 
   @Override
   protected void useOutput(double output, State setpoint) {
     // TODO Auto-generated method stub
-    // Calculate the feedforward from the sepoint
-    double feedforward = m_feedforward.calculate(setpoint.position, setpoint.velocity);
-    // Add the feedforward to the PID output to get the motor output
-    m_ElevAngle.setVoltage(output + feedforward);
+    m_ElevAngle.set(output);
   }
 
   @Override
   public double getMeasurement() {
-    // TODO Auto-generated method stub
     return m_EncAngEncoder.getPosition();
+  }
+
+  public void setPermGoal(double goal) {
+    staticGoal = goal;
   }
 }
