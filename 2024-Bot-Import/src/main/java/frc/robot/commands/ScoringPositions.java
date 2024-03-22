@@ -30,16 +30,8 @@ public class ScoringPositions {
         );
     }
 
-    public Command zero(ElevatorExtend elev, ShooterBoxPivot shoot, ElevatorPivot elevPiv) {
-        return Commands.runOnce(
-        () -> {
-            elevPiv.setGoal(0);
-            elevPiv.setPermGoal(0);
-            elevPiv.enable();
-        },
-        elevPiv)
-        .andThen(
-            new ParallelCommandGroup(
+    public Command zeroAmp(ElevatorExtend elev, ShooterBoxPivot shoot, ElevatorPivot elevPiv) {
+        return new ParallelCommandGroup(
             Commands.runOnce(
             () ->  {
                 elev.setGoal(0);
@@ -50,8 +42,7 @@ public class ScoringPositions {
                 shoot.setGoal(0.0);
                 shoot.enable();
             }, shoot)
-            )
-        );
+            );
     }
 
     public Command climb(ElevatorExtend elev, ShooterBoxPivot shoot, ElevatorPivot elevPiv) {
@@ -107,5 +98,17 @@ public class ScoringPositions {
             elevPiv.enable();
         },
         elevPiv);
+    }
+
+    public Command defaultSpeakerZero(ElevatorPivot elevPiv) {
+        return Commands.runOnce(
+        () -> {
+            elevPiv.setGoal(0);
+            elevPiv.setPermGoal(0);
+            elevPiv.enable();
+        },
+        elevPiv)
+        .withTimeout(1)
+        .andThen(Commands.runOnce(() -> elevPiv.disable(), elevPiv));
     }
 }

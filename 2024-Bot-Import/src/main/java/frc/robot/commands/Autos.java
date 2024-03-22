@@ -19,25 +19,11 @@ import frc.robot.subsystems.Shooter_Box.Indexer;
 import frc.robot.subsystems.Shooter_Box.ShooterBox;
 
 /** Add your docs here. */
-public class Autos {
-    public final LoggedDashboardChooser<Command> autoChooser;
- 
-    public Autos() { 
-        autoChooser = new LoggedDashboardChooser<>("AutoChooser", AutoBuilder.buildAutoChooser());
-        SmartDashboard.putData("Auto Mode", AutoBuilder.buildAutoChooser());
+public class Autos { 
+    public Autos() {
     }
-    //Speaker Score then Taxi Auto
-    public Command shootThenTaxiTrajectoryCommand() {
-        PathPlannerPath path = PathPlannerPath.fromPathFile("shootThenTaxi.path"); //First we initialize our path from a file located within our project
 
-        PathConstraints constraints = new PathConstraints( //Then we declare the constraints of followng said path
-        1.75,
-        .85,
-        2.35,
-        .55);
-        
-        return AutoBuilder.pathfindThenFollowPath(path, constraints);
-    }
+    //Speaker Score then Taxi Auto
 
     public Command shootThenBackUp() {
         Command shootBackUp = new RunCommand(
@@ -50,10 +36,7 @@ public class Autos {
             new RunCommand(() -> RobotContainer.m_Indexer.setIndexerSpeed(.25), RobotContainer.m_Indexer)
             ).
             withTimeout(3)
-        ).andThen(
-            shootThenTaxiTrajectoryCommand()
         );
-        autoChooser.addOption("Score Speaker then Taxi", shootBackUp);
         return shootBackUp;
     }
 }

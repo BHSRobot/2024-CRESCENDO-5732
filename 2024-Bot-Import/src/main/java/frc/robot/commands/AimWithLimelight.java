@@ -29,6 +29,7 @@ public class AimWithLimelight extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    xError = limeHelp.getTX();
     swerve.drive(0, 0, limeHelp.aimRobotRot(), false, false);
   }
 

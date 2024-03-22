@@ -45,6 +45,7 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Supplier;
@@ -53,6 +54,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -74,6 +76,8 @@ public class RobotContainer {
   public final static ShooterBoxPivot m_ShooterBoxPivot = new ShooterBoxPivot();
 
   private final LoggedDashboardChooser<Command> autoChooser;
+
+  private Autos auto;
 
 
   // The driver's controller
@@ -107,6 +111,7 @@ public class RobotContainer {
     configureNamedCommands();
 
     autoChooser = new LoggedDashboardChooser<>("AutoChooser", AutoBuilder.buildAutoChooser());
+    auto = new Autos();
   }
 
   public void configureNamedCommands() {
@@ -135,11 +140,14 @@ public class RobotContainer {
     m_OpController.povRight().
       onTrue(new ScoringPositions().scoreAmpPos(m_ElevatorExtend, m_ShooterBoxPivot));
     //Zero Position
-    m_OpController.povDown().
-      onTrue(new ScoringPositions().zero(m_ElevatorExtend, m_ShooterBoxPivot, m_ElevatorPivot));
+    m_OpController.povLeft().
+      onTrue(new ScoringPositions().zeroAmp(m_ElevatorExtend, m_ShooterBoxPivot, m_ElevatorPivot));
     //Default Speaker Shoot
     m_OpController.povUp().
       onTrue(new ScoringPositions().defaultSpeaker(m_ElevatorPivot));
+    //Default Speaker Shoot
+    m_OpController.povDown().
+      onTrue(new ScoringPositions().defaultSpeakerZero(m_ElevatorPivot));
     //Climb Up
     m_OpController.y()
       .onTrue(new ScoringPositions().climb(m_ElevatorExtend, m_ShooterBoxPivot, m_ElevatorPivot));
@@ -207,7 +215,11 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
+
   public Command getAutonomousCommand() {
+    // return new PathPlannerAuto("New Auto");
+    //return new Autos.shootThenBackUp();
     return autoChooser.get();
+    // return auto.shootThenBackUp();
   }          
 }
