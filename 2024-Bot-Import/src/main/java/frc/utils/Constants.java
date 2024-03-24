@@ -32,10 +32,15 @@ import edu.wpi.first.wpilibj.RobotBase;
 public final class Constants {
   public static final class MechConstants {
 
-    //Elevator/Wrist Pivot PID
-    public static final double kPElevAngle = 0.15;
+    //Elevator PID
+    public static final double kPElevAngle = 0.025;
     public static final double kIElevAngle = 0.0;
-    public static final double kDElevAngle = 0;
+    public static final double kDElevAngle = 0.0;
+
+    //Wrist Pivot PID
+    public static final double kPWristAngle = 0.4;
+    public static final double kIWristAngle = 0.008;
+    public static final double kDWristAngle = 0.0;
 
     //Elevator Extension PID
     public static final double kPElevLen = 0.05;
@@ -47,14 +52,15 @@ public final class Constants {
     public static final double kWristAngleConversionFactor = 360 / 40; //gear ratio 40
 
     public static final double kElevAngleMaxVelocity = 6;
-    public static final double kElevAngleMaxAcceleration = 3.5;
+    public static final double kElevAngleMaxAcceleration = 1.5;
 
     //Elevator Pivot Feedforward
-    public static final double kGElevAng = 1.35;
-    public static final double kVElevAng = 2.10;
+    public static final double kGElevAng = 1.15;
+    public static final double kVElevAng = 1.8;
     public static final double kAElevAng = 0.06;
 
     //Elevator Extension Feedforward
+    public static final double kSElevExt = 0.32;
     public static final double kGElevExt = 0.19;
     public static final double kVElevExt = 1.53;
     public static final double kAElevExt = 0.04;
@@ -83,7 +89,7 @@ public final class Constants {
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
-    public static final double kMaxSpeedMetersPerSecond = 5; // Max speed = 5.0
+    public static final double kMaxSpeedMetersPerSecond = 4.5; // Max speed = 5.0
     public static final double kMaxAngularSpeed = 2.25 * Math.PI; // radians per second  max is 4 so far?
 
     public static final double kDirectionSlewRate = 2.3; // radians per second

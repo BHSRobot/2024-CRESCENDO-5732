@@ -33,29 +33,27 @@ public class ShooterBoxPivot extends ProfiledPIDSubsystem {
 
   private NetworkTable table;
 
-  private double staticGoal;
-
   /** Creates a new ShooterBoxPivot. */
   public ShooterBoxPivot() {
     super(
         // The ProfiledPIDController used by the subsystem
         new ProfiledPIDController(
-            MechConstants.kPElevAngle,
-            MechConstants.kIElevAngle,
-            MechConstants.kDElevAngle,
+            MechConstants.kPWristAngle,
+            MechConstants.kIWristAngle,
+            MechConstants.kIWristAngle,
             // The motion profile constraints
-            new TrapezoidProfile.Constraints(180, 90)));
+            new TrapezoidProfile.Constraints(180, 150)));
     m_WristAngle = new CANSparkMax(MechConstants.kWristPivID, MotorType.kBrushless);
     m_feedforward = new ArmFeedforward(
       0,
       MechConstants.kGWrist,
       MechConstants.kVWrist,
       MechConstants.kAWrist);
-
     m_WriAngEncoder = m_WristAngle.getEncoder();
     m_WriAngEncoder.setPositionConversionFactor(MechConstants.kWristAngleConversionFactor);
-    m_WristAngle.setIdleMode(IdleMode.kCoast);
-    setGoal(MechConstants.kWristAngleOffest);
+    m_WriAngEncoder.setPosition(0);
+    m_WristAngle.setIdleMode(IdleMode.kBrake);
+    m_WristAngle.burnFlash();
 
     table = NetworkTableInstance.getDefault().getTable("limelight");
   }
@@ -80,6 +78,10 @@ public class ShooterBoxPivot extends ProfiledPIDSubsystem {
     m_WristAngle.setVoltage(output);
   }
 
+  public void setEncoderPos(double pos) {
+    m_WriAngEncoder.setPosition(pos);
+  }
+
   @Override
   public double getMeasurement() {
     // Return the process variable measurement here
@@ -95,7 +97,4 @@ public class ShooterBoxPivot extends ProfiledPIDSubsystem {
       m_WristAngle.set(speed);
   }
 
-  public void setPermGoal(double goal) {
-    staticGoal = goal;
-  }
 }

@@ -15,31 +15,31 @@ import frc.robot.subsystems.Shooter_Box.ShooterBoxPivot;
 public class ScoringPositions {
     public Command scoreAmpPos(ElevatorExtend elev, ShooterBoxPivot shoot) {
         return new ParallelCommandGroup(
+            // Commands.runOnce(
+            //     () ->  {
+            //         elev.setGoal(.78);
+            //         elev.enable();
+            //     },
+            //     elev),
             Commands.runOnce(
                 () ->  {
-                    elev.setGoal(.78);
-                    elev.enable();
-                },
-                elev),
-            Commands.runOnce(
-                () ->  {
-                    shoot.setGoal(101.5);
+                    shoot.setGoal(20);
                     shoot.enable();
                 },
                 shoot)
         );
     }
 
-    public Command zeroAmp(ElevatorExtend elev, ShooterBoxPivot shoot, ElevatorPivot elevPiv) {
+    public Command zeroAmp(ElevatorExtend elev, ShooterBoxPivot shoot) {
         return new ParallelCommandGroup(
+            // Commands.runOnce(
+            // () ->  {
+            //     elev.setGoal(0);
+            //     elev.enable();
+            // }, elev),
             Commands.runOnce(
             () ->  {
-                elev.setGoal(0);
-                elev.enable();
-            }, elev),
-            Commands.runOnce(
-            () ->  {
-                shoot.setGoal(0.0);
+                shoot.setGoal(-0.5);
                 shoot.enable();
             }, shoot)
             );
@@ -60,8 +60,7 @@ public class ScoringPositions {
         .withTimeout(1.2).
         andThen(Commands.runOnce(
         () -> {
-            elevPiv.setGoal(30);
-            elevPiv.setPermGoal(30);
+            elevPiv.setGoal(294);
             elevPiv.enable();
         },
         elevPiv));
@@ -69,32 +68,16 @@ public class ScoringPositions {
 
     public Command climbZero(ElevatorExtend elev, ShooterBoxPivot shoot, ElevatorPivot elevPiv) {
         return Commands.runOnce(
-            () -> {
-                elevPiv.setGoal(0);
-                elevPiv.setPermGoal(0);
-                elevPiv.enable();
-            }, elevPiv).withTimeout(1.2)
-            .andThen(
-                new ParallelCommandGroup(
-                    Commands.runOnce(
-                    () ->  {
-                        elev.setGoal(0);
-                        elev.enable();
-                    }, elev),
-                    Commands.runOnce(
-                    () ->  {
-                        shoot.setGoal(0);
-                        shoot.enable();
-                    }, shoot)
-                ));
-
+            () ->  {
+                elev.setGoal(0);
+                elev.enable();
+            }, elev);
     }
 
     public Command defaultSpeaker(ElevatorPivot elevPiv) {
         return Commands.runOnce(
         () -> {
-            elevPiv.setGoal(7.5);
-            elevPiv.setPermGoal(7.5);
+            elevPiv.setGoal(268);
             elevPiv.enable();
         },
         elevPiv);
@@ -103,12 +86,9 @@ public class ScoringPositions {
     public Command defaultSpeakerZero(ElevatorPivot elevPiv) {
         return Commands.runOnce(
         () -> {
-            elevPiv.setGoal(0);
-            elevPiv.setPermGoal(0);
+            elevPiv.setGoal(252);
             elevPiv.enable();
         },
-        elevPiv)
-        .withTimeout(1)
-        .andThen(Commands.runOnce(() -> elevPiv.disable(), elevPiv));
+        elevPiv);
     }
 }

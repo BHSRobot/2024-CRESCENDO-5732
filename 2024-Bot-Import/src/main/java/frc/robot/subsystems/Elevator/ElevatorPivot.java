@@ -22,6 +22,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -29,11 +30,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class ElevatorPivot extends ProfiledPIDSubsystem {
   private CANSparkMax m_ElevAngle;
 
-  private RelativeEncoder m_EncAngEncoder;
+  private DutyCycleEncoder m_EncAngEncoder;
 
   private ArmFeedforward m_feedforward;
-
-  private static double staticGoal;
 
   /** Creates a new Elevator. */
   public ElevatorPivot() {
@@ -46,7 +45,7 @@ public class ElevatorPivot extends ProfiledPIDSubsystem {
             (MechConstants.kElevAngleMaxVelocity, 
             MechConstants.kElevAngleMaxAcceleration)
         ), 
-        0);
+        250);
     m_ElevAngle = new CANSparkMax(MechConstants.kElevPivID, MotorType.kBrushless);
     m_feedforward = new ArmFeedforward(
       0,
@@ -54,11 +53,10 @@ public class ElevatorPivot extends ProfiledPIDSubsystem {
       MechConstants.kVElevAng,
       MechConstants.kAElevAng);
 
-    m_EncAngEncoder = m_ElevAngle.getEncoder();
-    m_EncAngEncoder.setPositionConversionFactor(MechConstants.kElevAngleConversionFactor);
-    m_EncAngEncoder.setPosition(0);
-    setGoal(0);
+    m_EncAngEncoder = new DutyCycleEncoder(8);
+    m_EncAngEncoder.setDistancePerRotation(3.33);
     m_ElevAngle.setIdleMode(IdleMode.kBrake);
+    m_ElevAngle.burnFlash();
   }
 
   @Override
@@ -68,22 +66,23 @@ public class ElevatorPivot extends ProfiledPIDSubsystem {
     Logger.recordOutput("Elevator Pivot Angle", getMeasurement());
     SmartDashboard.putNumber("Elevator Pivot Angle", getMeasurement());
 
-    if (DriverStation.isDisabled())
-      setGoal(staticGoal);
   }
 
   @Override
   protected void useOutput(double output, State setpoint) {
     // TODO Auto-generated method stub
-    m_ElevAngle.set(output);
+    double feedforward = m_feedforward.calculate(setpoint.position, setpoint.velocity); 
+    if (getMeasurement() <= 250 || getMeasurement() >= 268)
+      m_ElevAngle.set(0);
+    else if (output >= .65)
+      m_ElevAngle.set(.65);
+    else
+      m_ElevAngle.set(output);
   }
 
   @Override
   public double getMeasurement() {
-    return m_EncAngEncoder.getPosition();
+    return m_EncAngEncoder.getAbsolutePosition() * (360);
   }
 
-  public void setPermGoal(double goal) {
-    staticGoal = goal;
-  }
 }

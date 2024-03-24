@@ -4,19 +4,12 @@
 
 package frc.robot.commands;
 
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.path.PathPlannerPath;
-
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.RobotContainer;
-import frc.robot.subsystems.Shooter_Box.Indexer;
-import frc.robot.subsystems.Shooter_Box.ShooterBox;
 
 /** Add your docs here. */
 public class Autos { 
@@ -25,18 +18,31 @@ public class Autos {
 
     //Speaker Score then Taxi Auto
 
-    public Command shootThenBackUp() {
-        Command shootBackUp = new RunCommand(
-            () -> RobotContainer.m_ShooterBox.setShooterSpeed(1),
-            RobotContainer.m_ShooterBox).
-        withTimeout(2.5).
-        andThen(
-            new ParallelCommandGroup(
-            new RunCommand(() -> RobotContainer.m_ShooterBox.setShooterSpeed(-1), RobotContainer.m_ShooterBox),
-            new RunCommand(() -> RobotContainer.m_Indexer.setIndexerSpeed(.25), RobotContainer.m_Indexer)
-            ).
-            withTimeout(3)
-        );
-        return shootBackUp;
+    public Command shootSpeaker() {
+        Command aimShooter = Commands.runOnce(
+            () -> {
+                RobotContainer.m_ElevatorPivot.setGoal(265);
+                RobotContainer.m_ElevatorPivot.enable();
+            },
+            RobotContainer.m_ElevatorPivot
+            );
+        Command lowerShooter = Commands.runOnce(
+            () -> {
+                RobotContainer.m_ElevatorPivot.disable();
+            },
+            RobotContainer.m_ElevatorPivot
+            );
+        Command revShooterBox = new RunCommand(
+            () -> RobotContainer.m_ShooterBox.setShooterSpeed(-1),
+            RobotContainer.m_ShooterBox);
+        Command runIndexerUp = new RunCommand(
+            () -> RobotContainer.m_Indexer.setIndexerSpeed(.5),
+            RobotContainer.m_Indexer);
+        return new ParallelCommandGroup(
+            revShooterBox,
+            aimShooter,
+            new WaitCommand(4.5).andThen(runIndexerUp)
+        ).withTimeout(5)
+        .andThen(lowerShooter);
     }
 }

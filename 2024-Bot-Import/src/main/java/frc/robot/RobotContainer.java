@@ -67,7 +67,7 @@ public class RobotContainer {
   public final static DriveSubsystem m_robotDrive = new DriveSubsystem();
   //Elevator stuff
   private final ElevatorExtend m_ElevatorExtend = new ElevatorExtend();
-  private final ElevatorPivot m_ElevatorPivot = new ElevatorPivot();
+  public final static ElevatorPivot m_ElevatorPivot = new ElevatorPivot();
   //Intake/Index
   public final static Intake m_Intake = new Intake();
   public final static Indexer m_Indexer = new Indexer();
@@ -137,23 +137,30 @@ public class RobotContainer {
       whileTrue(new InstantCommand(() -> m_robotDrive.setX(), m_robotDrive));
 
     //Amp Score
-    m_OpController.povRight().
-      onTrue(new ScoringPositions().scoreAmpPos(m_ElevatorExtend, m_ShooterBoxPivot));
-    //Zero Position
-    m_OpController.povLeft().
-      onTrue(new ScoringPositions().zeroAmp(m_ElevatorExtend, m_ShooterBoxPivot, m_ElevatorPivot));
-    //Default Speaker Shoot
-    m_OpController.povUp().
-      onTrue(new ScoringPositions().defaultSpeaker(m_ElevatorPivot));
-    //Default Speaker Shoot
-    m_OpController.povDown().
-      onTrue(new ScoringPositions().defaultSpeakerZero(m_ElevatorPivot));
-    //Climb Up
-    m_OpController.y()
-      .onTrue(new ScoringPositions().climb(m_ElevatorExtend, m_ShooterBoxPivot, m_ElevatorPivot));
-    //Climb Zero
-    m_OpController.x()
-      .onTrue(new ScoringPositions().climbZero(m_ElevatorExtend, m_ShooterBoxPivot, m_ElevatorPivot));
+    // m_OpController.b().
+    //   onTrue(new ScoringPositions().scoreAmpPos(m_ElevatorExtend, m_ShooterBoxPivot));
+    // //Zero Position
+    // m_OpController.x().
+    //   onTrue(new ScoringPositions().zeroAmp(m_ElevatorExtend, m_ShooterBoxPivot));
+
+    // //Default Speaker Shoot
+    // m_OpController.y().
+    //   onTrue(new ScoringPositions().defaultSpeaker(m_ElevatorPivot));
+    // // Default Speaker Shoot
+    // m_OpController.a().
+    //   onTrue(new ScoringPositions().defaultSpeakerZero(m_ElevatorPivot));
+
+    // Climb Up
+    // m_OpController.povUp()
+    //   .onTrue(new ScoringPositions().climb(m_ElevatorExtend, m_ShooterBoxPivot, m_ElevatorPivot));
+    // //Climb Zero
+    // m_OpController.povDown()
+    //   .onTrue(new ScoringPositions().climbZero(m_ElevatorExtend, m_ShooterBoxPivot, m_ElevatorPivot));
+    //Reset Wrist Piv Position
+    m_OpController.leftBumper()
+      .onTrue(Commands.runOnce(
+        () -> m_ShooterBoxPivot.setEncoderPos(0),
+        m_ShooterBoxPivot));
 
     //Driver Intake
     m_driverController.rightTrigger().
@@ -166,8 +173,12 @@ public class RobotContainer {
 
     //Shooter Box Front Shooter(s)
     m_OpController.rightTrigger().
-      onTrue(m_ShooterBox.enabledCommand())
-      .onFalse(m_ShooterBox.disabledCommand());    
+      onTrue(m_ShooterBox.shootCommand())
+      .onFalse(m_ShooterBox.disabledCommand());  
+    
+    m_OpController.leftTrigger().
+      onTrue(m_ShooterBox.intakeCommand().alongWith(m_Indexer.backCommand()))
+      .onFalse(m_ShooterBox.disabledCommand().alongWith(m_Indexer.disabledCommand()));    
     
     //Driver Aligns to AprilTag
     // m_driverController.a().
@@ -192,6 +203,7 @@ public class RobotContainer {
     //   );
   }
 
+
   public void setupDriverTab() {
     ShuffleboardTab driverTab = Shuffleboard.getTab("Driver");
     driverTab.addDouble("Time Remaining", () -> {
@@ -208,6 +220,13 @@ public class RobotContainer {
     );
     
     CameraServer.startAutomaticCapture();
+    CameraServer.startAutomaticCapture();
+  }
+
+  public void disablePIDSystems() {
+    m_ElevatorExtend.disable();
+    m_ShooterBoxPivot.disable();
+    
   }
 
   /**
@@ -217,9 +236,9 @@ public class RobotContainer {
    */
 
   public Command getAutonomousCommand() {
-    // return new PathPlannerAuto("New Auto");
-    //return new Autos.shootThenBackUp();
-    return autoChooser.get();
-    // return auto.shootThenBackUp();
+    //return new PathPlannerAuto("New Auto");
+    // return autoChooser.get();
+    return auto.shootSpeaker();
+    // return null;
   }          
 }

@@ -33,7 +33,8 @@ public class ShooterBox extends SubsystemBase {
   }
 
   public enum ShooterState {
-    ENABLED,
+    SHOOT,
+    INTAKE,
     DISABLED
   }
 
@@ -43,8 +44,11 @@ public class ShooterBox extends SubsystemBase {
           case DISABLED:
               ShooterNeo1.set(0);
               break;
-          case ENABLED:
+          case SHOOT:
               ShooterNeo1.set(-1);
+              break;
+          case INTAKE:
+              ShooterNeo1.set(.7);
               break;
       }
   }
@@ -55,9 +59,15 @@ public class ShooterBox extends SubsystemBase {
       });
   }
 
-  public Command enabledCommand() {
+  public Command shootCommand() {
       return runOnce(() -> {
-          setShooterState(ShooterState.ENABLED);
+          setShooterState(ShooterState.SHOOT);
+      });
+  }
+
+  public Command intakeCommand() {
+      return runOnce(() -> {
+          setShooterState(ShooterState.INTAKE);
       });
   }
 

@@ -4,33 +4,15 @@
 
 package frc.robot;
 
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.utils.Constants;
-import frc.utils.Constants.DriveConstants;
-
-import java.util.List;
-
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
-
-import com.ctre.phoenix6.hardware.Pigeon2;
 
 
 /**
@@ -43,9 +25,6 @@ public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
-
-  private final Pigeon2 m_gyro = new Pigeon2(7);
-
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -79,24 +58,6 @@ public class Robot extends LoggedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-    Field2d field = new Field2d();
-    SmartDashboard.putData("Field", field);
-
-    TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
-              /*AutoConstants.kMaxSpeedMetersPerSecond*/ 1.5,
-              /*AutoConstants.kMaxAccelerationMetersPerSecondSquared*/ 1.5)
-                      .setKinematics(DriveConstants.kDriveKinematics);
-
-      // 2. Generate trajectory
-      Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
-              new Pose2d(0, 0, new Rotation2d(0)),
-              List.of(
-                      new Translation2d(1, 0),
-                      new Translation2d(1, 0)),
-              new Pose2d(3, 0, Rotation2d.fromDegrees(0)),
-              trajectoryConfig);
-
-    field.getObject("traj").setTrajectory(trajectory);
   }
 
   /**
@@ -117,7 +78,9 @@ public class Robot extends LoggedRobot {
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    m_robotContainer.disablePIDSystems();
+  }
 
   @Override
   public void disabledPeriodic() {}
